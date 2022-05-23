@@ -52,3 +52,5 @@ MUST HAVE:
 - [Understanding Buffer Overflow attacks](https://itandsecuritystuffs.wordpress.com/2014/03/18/understanding-buffer-overflows-attacks-part-1/)
 - [Buffer Overflow generator](https://wiremask.eu/tools/buffer-overflow-pattern-generator/)
 - Whats a [shellcode](https://fr.wikipedia.org/wiki/Shellcode) and [where](http://shell-storm.org/shellcode/) to find some.
+- GOD TIER DOCUMENTATION FOR INTRUCTIONS: [amd](https://www.amd.com/system/files/TechDocs/24594.pdf)
+- DEMI-GOD TIER DOCUMENTATION FOR INSTRUCTIONS: [gladir](https://www.gladir.com/CODER/ASM8086/)
