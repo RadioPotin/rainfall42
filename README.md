@@ -54,3 +54,4 @@ MUST HAVE:
 - Whats a [shellcode](https://fr.wikipedia.org/wiki/Shellcode) and [where](http://shell-storm.org/shellcode/) to find some.
 - GOD TIER DOCUMENTATION FOR INTRUCTIONS: [amd](https://www.amd.com/system/files/TechDocs/24594.pdf)
 - DEMI-GOD TIER DOCUMENTATION FOR INSTRUCTIONS: [gladir](https://www.gladir.com/CODER/ASM8086/)
+- KING OF ALL SANDBOXES ASM: [godbolt](https://godbolt.org/)
