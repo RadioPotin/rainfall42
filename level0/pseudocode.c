@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     gid = getegid();
     uid = geteuid();
     setresgid(gid, gid, gid);
-		setresuid(uid, uid, uid);
+    setresuid(uid, uid, uid);
     execv("/bin/sh", arg);
 
   }
