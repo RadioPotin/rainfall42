@@ -1,1 +1,16 @@
 
+start p()
+	buffer[76]
+	int number
+	fflush(stdout)
+	gets(buffer)
+	if (number & 0xb0000000)
+		printf(number)
+	puts(buffer)
+	strdup(buffer)
+end p
+
+start main()
+	p()
+	return
+end main
