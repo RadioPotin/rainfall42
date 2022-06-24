@@ -71,8 +71,9 @@ There seems to be a lot going on here.
 Indeed there could be several ways for us to make this executable open a shell for us:
 1. use a `ret2libc` exploit by injecting a shell code that would call a `/bin/sh` from within the available symbols in the binary.
 2. use a `ROP` (return oriented programming) exploit, in order to carefully sequence a series of `RET` operation with addresses, that will allow the cherry picking of instructions to execute.
+3. Inject a shellcode on the heap, and execute it thanks to a RIP register overwrite
 
-We will try the first one.
+We will try the third one.
 
 ### return to libc
 
