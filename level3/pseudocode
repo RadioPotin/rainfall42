@@ -1,0 +1,15 @@
+global int m
+
+begin v()
+  buffer[536]
+	fgets(buffer,512,1)
+	printf(buffer)
+	if (m == 64)
+		printf("Wait what?!\n")
+		system("bin/sh")
+  return
+end v
+
+begin main()
+  v()
+end main

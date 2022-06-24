@@ -6,6 +6,7 @@ start p()
 	gets(buffer)
 	if (number & 0xb0000000)
 		printf(number)
+    exit 1
 	puts(buffer)
 	strdup(buffer)
 end p

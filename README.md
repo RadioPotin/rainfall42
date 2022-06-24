@@ -90,7 +90,10 @@ MUST HAVE:
 - KING OF ALL SANDBOXES ASM: [godbolt](https://godbolt.org/)
 - [peda](https://github.com/longld/peda):
   > level0@RainFall:/tmp$ mkdir peda
+  >
   > level0@RainFall:/tmp$ chmod ugo+rwx /tmp/peda
+  >
   > scp -P 4242 -r peda/ level0@IP:/tmp/
+  >
   > chmod +rwx ~; echo "source /tmp/peda/peda.py" > ~/.gdbinit
 - [Ghidra](https://github.com/NationalSecurityAgency/ghidra) to reverse binaries

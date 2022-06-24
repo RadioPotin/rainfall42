@@ -75,7 +75,7 @@ Indeed there could be several ways for us to make this executable open a shell f
 
 We will try the third one.
 
-### return to libc
+### Heap based shellcode 
 
 We know this is possible because there is a function call (strdup) that will allocate on the HEAP a chunk of data that we may very well have tailored to call the wanted functions from the libc.
 
