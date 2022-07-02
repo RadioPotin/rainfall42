@@ -58,7 +58,7 @@ setup() {
 	set +o xtrace
 	echo -e "\nAdding correct permissions to /tmp/peda ...\n"
 	set -o xtrace
-	sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $USER@$IP -p $PORT 'chmod ugo+rwx /tmp/peda'
+	sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $USER@$IP -p $PORT 'chmod 777 /tmp/peda'
 	set +o xtrace
 	echo -e "\nCloning Peda locally ...\n"
 	set -o xtrace
