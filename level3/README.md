@@ -2,7 +2,7 @@
 
 ## Hint
 
-When we log into the machine as `level3`, we notice a binary that segfaults when we run it without a parameter:
+When we log into the machine as `level3`, we notice a binary:
 
 ```shell-session
 level3@RainFall:~$ ls -l
@@ -93,7 +93,7 @@ End of assembler dump.
 # Format String Attack
 
 The vulnerabilty here is clearly the usage of an unsanitized user-defined conversion string and the lack of variadic argument to `printf`. This combination is very dangerous as it allows the user to display data and addresses found in the stack, and it's precisely what is required by this exercise as we can read [here](https://owasp.org/www-community/attacks/Format_string_attack):
-> The attack could be executed when the application doesn’t properly validate the submitted input. 
+> The attack could be executed when the application doesn’t properly validate the submitted input.
 > In this case, if a Format String parameter, like %x, is inserted into the posted data, the string is parsed by the Format Function, and the conversion specified in the parameters is executed.
 > However, the Format Function is expecting more arguments as input, and if these arguments are not supplied, the function could read or write the stack.
 
