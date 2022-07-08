@@ -6,12 +6,13 @@ end exit
 
 begin o()
     system("/bin/sh")
-    _exit
+    _exit 1
 end
 
 begin n()
     buffer[520]
     fgets(buffer,512,1)
+    printf(buffer);
     exit()
 end n
 
