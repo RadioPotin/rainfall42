@@ -1,0 +1,20 @@
+begin asm exit()
+   0x080483d0 <+0>:  jmp    DWORD PTR ds:0x8049838
+   0x080483d6 <+6>:  push   0x28
+   0x080483db <+11>: jmp    0x8048370
+end exit
+
+begin o()
+    system("/bin/sh")
+    _exit
+end
+
+begin n()
+    buffer[520]
+    fgets(buffer,512,1)
+    exit()
+end n
+
+begin main()
+    n()
+end main
