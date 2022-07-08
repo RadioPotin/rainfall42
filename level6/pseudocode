@@ -1,0 +1,22 @@
+begin n()
+    system("/bin/cat /home/user/level7/.pass")
+    return
+end n
+
+begin m()
+    write("Nope")
+    return
+end m
+
+begin main()
+    a = malloc(64)
+
+    b = malloc(4)
+    *b = m
+
+    strcpy(argv[1], a)
+
+    *b()                    <--- m()
+
+    return
+end main
