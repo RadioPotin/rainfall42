@@ -169,7 +169,7 @@ And this display the number of bytes in 'm'.
 Pretty much the same as level3.
 
 1. We have to find the address of the global variable `m` in the .bss section. Wich is outside of the control flow of the program.
-3. We must find the Format String Direct access to be able to do our Format String attack.
+3. We must find the format string direct access to be able to do our Format String attack.
 2. We must write 16930116(10) bytes in the global variable `m` to trigger the Format String attack and get the shell.
 
 # Proceed
@@ -196,7 +196,7 @@ BBBB.42424242
 
 Which is indeed the correct position.
 
-3. We will use the Format String address to write 16930116(10) bytes in the global variable `m` to trigger the Format String attack and get the shell.
+3. We will use the format string direct access address to write 16930116(10) bytes in the global variable `m` to trigger the Format String attack and get the call to system().
 
 We must substract 4 bytes from the total amout of bytes to write to leave the place for the Format String address and have the correct amount for the conditional jump.
 So it will be 16930116(10) bytes - 4 = 16930112(10) bytes.
