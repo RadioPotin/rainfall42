@@ -28,7 +28,7 @@ level6@RainFall:~$ ./level6 test
 Nope
 ```
 
-Ok let's dig a bit wit gdb.
+Ok let's dig a bit with gdb.
 
 ## gdb
 
@@ -65,7 +65,7 @@ Non-debugging symbols:
 0x0804858c  _fini
 ```
 
-Let's disas `main``
+Let's disas `main`
 
 ```gdb
 gdb-peda$ disas main
@@ -80,7 +80,7 @@ Dump of assembler code for function main:
    0x08048495 <+25>:	mov    DWORD PTR [esp],0x4
    0x0804849c <+32>:	call   0x8048350 <malloc@plt>           <-- Function `malloc` called for a second time
    0x080484a1 <+37>:	mov    DWORD PTR [esp+0x18],eax
-   0x080484a5 <+41>:	mov    edx,0x8048468
+   0x080484a5 <+41>:	mov    edx,0x8048468		        <-- Address of function m(), as seen in previous codeblock
    0x080484aa <+46>:	mov    eax,DWORD PTR [esp+0x18]
    0x080484ae <+50>:	mov    DWORD PTR [eax],edx
    0x080484b0 <+52>:	mov    eax,DWORD PTR [ebp+0xc]
