@@ -12,7 +12,7 @@ begin main()
     a = malloc(64)
 
     b = malloc(4)
-    b = m
+    *b = m
 
     strcpy(argv[1], a)
 
