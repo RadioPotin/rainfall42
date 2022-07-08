@@ -109,7 +109,7 @@ Dump of assembler code for function m:
    0x08048468 <+0>:	push   ebp
    0x08048469 <+1>:	mov    ebp,esp
    0x0804846b <+3>:	sub    esp,0x18
-   0x0804846e <+6>:	mov    DWORD PTR [esp],0x80485d1
+   0x0804846e <+6>:	mov    DWORD PTR [esp],0x80485d1            <-- "Nope"
    0x08048475 <+13>:	call   0x8048360 <puts@plt>             <-- Function `puts`
    0x0804847a <+18>:	leave
    0x0804847b <+19>:	ret
