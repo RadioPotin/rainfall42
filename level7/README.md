@@ -267,6 +267,7 @@ You will find a short explanation [here](https://github.com/maxisimo/42-RainFall
 >0x08048ecf <+12>:    mov    eax,DWORD PTR [eax]
 >```
 > <+6> : Store all parameters of the main function (all argv) in eax.
+>
 > <+9> : At this moment we add 0x4 to eax to reach argv + 1 (argv[1]). Here is how it work
 
 Meaning:
@@ -274,7 +275,7 @@ Meaning:
 > argc = [ebp+0x8]  
 > argv = [ebp+0xc + 4 * ARG_NUMBER]
 
-This means that the addresses used for writing or reading `argv` are contiguous and therefor easily findable with a buffer overflow...
+This means that the addresses used for writing or reading `argv` are contiguous and therefor easily overwritable with a buffer overflow...
 
 Finally, since we know there is a possibly for overwriting a `control-flow read` address at runtime, we should now focus on our GOT solution and nothing is easier, all we have to do is disassemble the call to the `puts()` function, denote the address and use it in our payload.
 
