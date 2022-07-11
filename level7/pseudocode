@@ -9,8 +9,8 @@ begin m()
 end m
 
 begin main(int argc, char **argv)
-  int *a;
-  int *b;
+  char *a;
+  char *b;
 
   a = malloc(8);
   a[0] = 1;
@@ -20,6 +20,12 @@ begin main(int argc, char **argv)
   b[0] = 2;
   b[1] = malloc(8);
 
+  strcpy(a[1], argv[1]);
+  strcpy(b[1], argv[2]);
 
+  FILE *file = fopen("/home/user/level7/.pass", "r");
 
+  fgets(c, 68, file);
+  puts("~~");
+  return 0;
 end main
