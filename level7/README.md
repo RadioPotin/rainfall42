@@ -1,4 +1,4 @@
-# level6
+# level7
 
 ## Hint
 
@@ -97,8 +97,8 @@ Dump of assembler code for function main:
    0x08048522 <+1>:	mov    ebp,esp
    0x08048524 <+3>:	and    esp,0xfffffff0
    0x08048527 <+6>:	sub    esp,0x20                  <--- Room allocated on the stack for two pointers
-   0x0804852a <+9>:	mov    DWORD PTR [esp],0x8       <--- put argument to malloc in esp 
-   0x08048531 <+16>:	call   0x80483f0 <malloc@plt>    <--- Call to malloc(8) 
+   0x0804852a <+9>:	mov    DWORD PTR [esp],0x8       <--- put argument to malloc in esp
+   0x08048531 <+16>:	call   0x80483f0 <malloc@plt>    <--- Call to malloc(8)
    0x08048536 <+21>:	mov    DWORD PTR [esp+0x1c],eax
    0x0804853a <+25>:	mov    eax,DWORD PTR [esp+0x1c]
    0x0804853e <+29>:	mov    DWORD PTR [eax],0x1       <--- Put value 1 at address in eax
@@ -142,7 +142,7 @@ Dump of assembler code for function main:
    0x080485d3 <+178>:	call   0x8048430 <fopen@plt>
    0x080485d8 <+183>:	mov    DWORD PTR [esp+0x8],eax   <--- FILE * returned by fopen
    0x080485dc <+187>:	mov    DWORD PTR [esp+0x4],0x44  <--- 68 bytes
-   0x080485e4 <+195>:	mov    DWORD PTR [esp],0x8049960 <--- Call writing to address of global variable c 
+   0x080485e4 <+195>:	mov    DWORD PTR [esp],0x8049960 <--- Call writing to address of global variable c
    0x080485eb <+202>:	call   0x80483c0 <fgets@plt>
    0x080485f0 <+207>:	mov    DWORD PTR [esp],0x8048703   <--- "~~"
    0x080485f7 <+214>:	call   0x8048400 <puts@plt>
@@ -172,7 +172,7 @@ Dump of assembler code for function m:
    0x080484fa <+6>:	mov    DWORD PTR [esp],0x0              <--- feeding value 0 to function time()
    0x08048501 <+13>:	call   0x80483d0 <time@plt>
    0x08048506 <+18>:	mov    edx,0x80486e0                    <--- "%s - %d\n" format string
-   0x0804850b <+23>:	mov    DWORD PTR [esp+0x8],eax		<--- Value returned by the call to time() 
+   0x0804850b <+23>:	mov    DWORD PTR [esp+0x8],eax		<--- Value returned by the call to time()
    0x0804850f <+27>:	mov    DWORD PTR [esp+0x4],0x8049960    <--- global variable c
    0x08048517 <+35>:	mov    DWORD PTR [esp],edx              <--- format string
    0x0804851a <+38>:	call   0x80483b0 <printf@plt>
@@ -272,7 +272,7 @@ You will find a short explanation [here](https://github.com/maxisimo/42-RainFall
 
 Meaning:
 
-> argc = [ebp+0x8]  
+> argc = [ebp+0x8]
 > argv = [ebp+0xc + 4 * ARG_NUMBER]
 
 This means that the addresses used for writing or reading `argv` are contiguous and therefor easily overwritable with a buffer overflow...
