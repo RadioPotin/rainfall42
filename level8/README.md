@@ -131,7 +131,7 @@ Dump of assembler code for function main:
    0x08048574 <+16>:	nop
    0x08048575 <+17>:	mov    ecx,DWORD PTR ds:0x8049ab0            <-- Put pointer of 0x8049ab0 in ecx (global service)
    0x0804857b <+23>:	mov    edx,DWORD PTR ds:0x8049aac            <-- Put pointer of 0x8049aac in edx (global auth)
-   0x08048581 <+29>:	mov    eax,0x8048810                         <-- Fed ""%p, %p \n" in eax (const char *format)
+   0x08048581 <+29>:	mov    eax,0x8048810                         <-- Fed "%p, %p \n" in eax (const char *format)
    0x08048586 <+34>:	mov    DWORD PTR [esp+0x8],ecx               <-- Put address of ecx in esp+0x8 (3rd argument = service)
    0x0804858a <+38>:	mov    DWORD PTR [esp+0x4],edx               <-- Put address of edx in esp+0x4 (2nd argument = auth)
    0x0804858e <+42>:	mov    DWORD PTR [esp],eax                   <-- Put eax as argument to printf in esp (1st argument = const *char *format)
@@ -175,7 +175,7 @@ Dump of assembler code for function main:
    0x0804861e <+186>:	mov    eax,ecx                               <-- Put ecx in eax (Counter)
    0x08048620 <+188>:	not    eax                                   <-- Invert eax (Counter)
    0x08048622 <+190>:	sub    eax,0x1                               <-- Subtract 1 from eax (Counter)
-   0x08048625 <+193>:	cmp    eax,0x1e                              <-- Compare eax with 0x1e (Counter)
+   0x08048625 <+193>:	cmp    eax,0x1e                              <-- Compare eax with 0x1e (Is the return value of strlen < 31 ?)
    0x08048628 <+196>:	ja     0x8048642 <main+222>                  <-- If eax is greater than 0x1e (30 decimal), jump to main+222 (goto MAIN_222:)
    0x0804862a <+198>:	lea    eax,[esp+0x20]                        <-- Fetch address of esp+0x20 in eax (char *s)
    0x0804862e <+202>:	lea    edx,[eax+0x5]                         <-- Fetch address of eax+0x5 in edx (char *s + 5)
@@ -223,7 +223,7 @@ Dump of assembler code for function main:
    0x080486b0 <+332>:	mov    ds:0x8049ab0,eax
    0x080486b5 <+337>:	lea    eax,[esp+0x20]
    0x080486b9 <+341>:	mov    edx,eax
-   0x080486bb <+343>:	mov    eax,0x804882d
+   0x080486bb <+343>:	mov    eax,0x804882d                         <-- "login"
    0x080486c0 <+348>:	mov    ecx,0x5
    0x080486c5 <+353>:	mov    esi,edx
    0x080486c7 <+355>:	mov    edi,eax
@@ -262,7 +262,11 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
-**WELL**... This is quite a HEFTY main... Let's proceed in chunks to decipher what's going on.
+### **WELL**... 
+
+This is quite a HEFTY main... 
+
+Let's proceed in chunks to decipher what's going on.
 
 
 Here are the most notable information we can gather at this point:
@@ -322,10 +326,16 @@ Here are the most notable information we can gather at this point:
 [...]
 ```
 
-- Everytime we give one of 4 strings (`auth `, `servic`, `login, ``reset`), the program does something differently similar: it calls `strncmp` on these strings and does something different with all of them:
-    - `auth `and `servic` both alter global variables of the same name declared in the binary.
+- Everytime we give one of 4 strings (`auth `, `servic`, `login`, `reset`), the program does something differently similar: it calls `strncmp` on these strings and does something different with all of them:
+    - `auth ` and `servic` both alter global variables of the same name declared in the binary.
        - `auth` gets allocated another chunk of 4 bytes every time at a new address (direct call to malloc)
-       - `servic` gets to keep the same address but the size of the allocated area increases by 7 bytes every time (call to strdup)
+       - `servic` gets allocated another address with a call to `strdup` with the address of the `buffer+7` .
+           ```gdb
+           0x080486a1 <+317>:	lea    eax,[esp+0x20]
+           0x080486a5 <+321>:	add    eax,0x7
+           0x080486a8 <+324>:	mov    DWORD PTR [esp],eax
+           0x080486ab <+327>:	call   0x8048430 <strdup@plt>
+           ```
     - `reset` leads to a call to call to `free(auth)` as seen here:
 	```gdb
         0x0804866b <+263>:	mov    eax,ds:0x8049aac      <-- address of auth symbol 
@@ -337,4 +347,5 @@ Here are the most notable information we can gather at this point:
         gdb-peda$ x/s 0x804883b
         0x804883b:	 "Password:\n"
         ```
+
 
