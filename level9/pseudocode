@@ -1,0 +1,30 @@
+BEGIN CLASS N(int i)
+  char buffer[104];
+  int val;
+
+  N(int val) {
+    this->val = val;
+  }
+
+  int operator+(N nb){
+    RETURN this->val + nb.val;
+  }
+
+  int operator-(N nb){
+    RETURN this->val - nb.val;
+  }
+
+  setAnnotation(char *s) {
+    call memcpy(this->buffer, s, strlen(str));
+  }
+END CLASS N
+
+BEGIN main(int argc, char **argv)
+  if (argc < 2){
+    exit 1;
+  }
+
+  N *n1 = new N(5)
+  N *n2 = new N(6)
+
+END main
