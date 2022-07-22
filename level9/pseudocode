@@ -29,4 +29,5 @@ BEGIN main(int argc, char **argv)
 
   n1->setAnnotation(av[1]);
 
+  return(*n1->operator+(n2->val));
 END main
