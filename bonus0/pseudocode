@@ -1,0 +1,43 @@
+begin p(char *buffer, char *dash)
+    // 4020
+    char tmp[4096];
+    char *newline;
+
+    puts(dash)
+
+    read(stdin, tmp, 4096);
+
+    newline = strchr(tmp, '\n');
+    *newline = '\0';
+
+    strncpy(buffer, tmp, 20);
+
+end p
+
+
+begin pp(char *s)
+    // 80
+    char *dash = " - ";
+    char a[20];
+    char b[20];
+
+    p(a, dash);
+    p(b, dash)
+
+
+    strcpy(s, a);
+
+    s[strlen(s)] = ' ';
+
+    strcat(s, b);
+
+end pp
+
+begin main()
+
+    char  s[54];
+
+    pp(s);
+    puts(s);
+
+end main

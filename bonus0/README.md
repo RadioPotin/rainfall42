@@ -98,10 +98,10 @@ Dump of assembler code for function main:
    0x080485a4 <+0>:	push   ebp
    0x080485a5 <+1>:	mov    ebp,esp
    0x080485a7 <+3>:	and    esp,0xfffffff0
-   0x080485aa <+6>:	sub    esp,0x40
-   0x080485ad <+9>:	lea    eax,[esp+0x16]
+   0x080485aa <+6>:	sub    esp,0x40                             <--|Alignement of a pointer char *s[54] bytes
+   0x080485ad <+9>:	lea    eax,[esp+0x16]                       <--|
    0x080485b1 <+13>:	mov    DWORD PTR [esp],eax
-   0x080485b4 <+16>:	call   0x804851e <pp>
+   0x080485b4 <+16>:	call   0x804851e <pp>                   <-- Call to pp(s)
    0x080485b9 <+21>:	lea    eax,[esp+0x16]
    0x080485bd <+25>:	mov    DWORD PTR [esp],eax
    0x080485c0 <+28>:	call   0x80483b0 <puts@plt>
@@ -120,16 +120,16 @@ Dump of assembler code for function pp:
    0x0804851f <+1>:	mov    ebp,esp
    0x08048521 <+3>:	push   edi
    0x08048522 <+4>:	push   ebx
-   0x08048523 <+5>:	sub    esp,0x50
-   0x08048526 <+8>:	mov    DWORD PTR [esp+0x4],0x80486a0
-   0x0804852e <+16>:	lea    eax,[ebp-0x30]
+   0x08048523 <+5>:	sub    esp,0x50                             <-- Space of 80 bytes to align 76 bytes of the stack frame (2 pointer char of 20 bytes and 1 pointer of 12 bytes)
+   0x08048526 <+8>:	mov    DWORD PTR [esp+0x4],0x80486a0        <-- Loading char *dash
+   0x0804852e <+16>:	lea    eax,[ebp-0x30]                   <-- Loading char *a
    0x08048531 <+19>:	mov    DWORD PTR [esp],eax
-   0x08048534 <+22>:	call   0x80484b4 <p>
-   0x08048539 <+27>:	mov    DWORD PTR [esp+0x4],0x80486a0
-   0x08048541 <+35>:	lea    eax,[ebp-0x1c]
+   0x08048534 <+22>:	call   0x80484b4 <p>                    <-- Call to p(s, dash)
+   0x08048539 <+27>:	mov    DWORD PTR [esp+0x4],0x80486a0    <-- Loading char *dash with Offset of 12 bytes
+   0x08048541 <+35>:	lea    eax,[ebp-0x1c]                   <-- Loading char *b
    0x08048544 <+38>:	mov    DWORD PTR [esp],eax
    0x08048547 <+41>:	call   0x80484b4 <p>
-   0x0804854c <+46>:	lea    eax,[ebp-0x30]
+   0x0804854c <+46>:	lea    eax,[ebp-0x30]                   <-- Loading char *a
    0x0804854f <+49>:	mov    DWORD PTR [esp+0x4],eax
    0x08048553 <+53>:	mov    eax,DWORD PTR [ebp+0x8]
    0x08048556 <+56>:	mov    DWORD PTR [esp],eax
