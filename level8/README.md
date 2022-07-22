@@ -57,7 +57,7 @@ level8@RainFall:~$ ./level8
 
 The program doesn't seems to crash. So lets dig with `gdb`.
 
-## available symbols 
+## available symbols
 
 Ok let's wrap up our gdb session. At first, we need to list all the functions.
 
@@ -135,33 +135,33 @@ Dump of assembler code for function main:
    0x08048586 <+34>:	mov    DWORD PTR [esp+0x8],ecx               <-- Put address of ecx in esp+0x8 (3rd argument = service)
    0x0804858a <+38>:	mov    DWORD PTR [esp+0x4],edx               <-- Put address of edx in esp+0x4 (2nd argument = auth)
    0x0804858e <+42>:	mov    DWORD PTR [esp],eax                   <-- Put eax as argument to printf in esp (1st argument = const *char *format)
-   0x08048591 <+45>:	call   0x8048410 <printf@plt>                
+   0x08048591 <+45>:	call   0x8048410 <printf@plt>
    0x08048596 <+50>:	mov    eax,ds:0x8049a80                      <-- Put address of stdin in eax (stdin)
    0x0804859b <+55>:	mov    DWORD PTR [esp+0x8],eax               <-- Put eax in esp+0x8 (3rd argument = stdin)
    0x0804859f <+59>:	mov    DWORD PTR [esp+0x4],0x80              <-- Put 0x80 in esp+0x4 (2nd argument = 128 in decimal)
    0x080485a7 <+67>:	lea    eax,[esp+0x20]                        <-- Put address of esp+0x20 in eax (1st argument = char *s)
    0x080485ab <+71>:	mov    DWORD PTR [esp],eax                   <-- Put eax as argument to fgets in esp
-   0x080485ae <+74>:	call   0x8048440 <fgets@plt>                 
+   0x080485ae <+74>:	call   0x8048440 <fgets@plt>
    0x080485b3 <+79>:	test   eax,eax                               <-- Test if fgets returned NULL
-   0x080485b5 <+81>:	je     0x804872c <main+456>                  
+   0x080485b5 <+81>:	je     0x804872c <main+456>
    0x080485bb <+87>:	lea    eax,[esp+0x20]                        <-- load address of buffer
    0x080485bf <+91>:	mov    edx,eax                               <-- put buffer in edx
-   0x080485c1 <+93>:	mov    eax,0x8048819                         <-- put "service" in eax 
+   0x080485c1 <+93>:	mov    eax,0x8048819                         <-- put "auth " in eax
    0x080485c6 <+98>:	mov    ecx,0x5                               <-- put 5 in ecx
    0x080485cb <+103>:	mov    esi,edx                               <-- put buffer in esi
-   0x080485cd <+105>:	mov    edi,eax                               <-- put "auth " in edi 
+   0x080485cd <+105>:	mov    edi,eax                               <-- put "auth " in edi
    0x080485cf <+107>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]<-- Begin of optimized inline code of strncmp: (repz means repeat if equal)
                                                                          strncmp(buffer, "auth ", 5)
-   0x080485d1 <+109>:	seta   dl                                    
-   0x080485d4 <+112>:	setb   al                                    
-   0x080485d7 <+115>:	mov    ecx,edx                               
-   0x080485d9 <+117>:	sub    cl,al                                 
-   0x080485db <+119>:	mov    eax,ecx                               
-   0x080485dd <+121>:	movsx  eax,al                                
-   0x080485e0 <+124>:	test   eax,eax                               
-   0x080485e2 <+126>:	jne    0x8048642 <main+222>                  
+   0x080485d1 <+109>:	seta   dl
+   0x080485d4 <+112>:	setb   al
+   0x080485d7 <+115>:	mov    ecx,edx
+   0x080485d9 <+117>:	sub    cl,al
+   0x080485db <+119>:	mov    eax,ecx
+   0x080485dd <+121>:	movsx  eax,al
+   0x080485e0 <+124>:	test   eax,eax
+   0x080485e2 <+126>:	jne    0x8048642 <main+222>
    0x080485e4 <+128>:	mov    DWORD PTR [esp],0x4                   <-- Else continue, put 4 in esp for malloc
-   0x080485eb <+135>:	call   0x8048470 <malloc@plt>                
+   0x080485eb <+135>:	call   0x8048470 <malloc@plt>
    0x080485f0 <+140>:	mov    ds:0x8049aac,eax                      <-- Return of malloc in ds:0x8049aac (global auth)
    0x080485f5 <+145>:	mov    eax,ds:0x8049aac                      <-- Put address of auth in eax (global auth)
    0x080485fa <+150>:	mov    DWORD PTR [eax],0x0                   <-- Set auth to NULL
@@ -184,28 +184,28 @@ Dump of assembler code for function main:
    0x08048636 <+210>:	mov    DWORD PTR [esp+0x4],edx               <-- Put edx in esp+0x4 (2nd argument)
    0x0804863a <+214>:	mov    DWORD PTR [esp],eax                   <-- Put eax in esp (1st argument)
    0x0804863d <+217>:	call   0x8048460 <strcpy@plt>
-   0x08048642 <+222>:	lea    eax,[esp+0x20]                        <-- load address of buffer                         
-   0x08048646 <+226>:	mov    edx,eax                               <-- put buffer in edx                               
-   0x08048648 <+228>:	mov    eax,0x804881f                         <-- put "reset" in eax                         
-   0x0804864d <+233>:	mov    ecx,0x5                               <-- put 5 in ecx                               
-   0x08048652 <+238>:	mov    esi,edx                               <-- put buffer in esi                               
-   0x08048654 <+240>:	mov    edi,eax                               <-- put "reset" in edi                               
+   0x08048642 <+222>:	lea    eax,[esp+0x20]                        <-- load address of buffer
+   0x08048646 <+226>:	mov    edx,eax                               <-- put buffer in edx
+   0x08048648 <+228>:	mov    eax,0x804881f                         <-- put "reset" in eax
+   0x0804864d <+233>:	mov    ecx,0x5                               <-- put 5 in ecx
+   0x08048652 <+238>:	mov    esi,edx                               <-- put buffer in esi
+   0x08048654 <+240>:	mov    edi,eax                               <-- put "reset" in edi
    0x08048656 <+242>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]<-- call to strncmp(buffer, "reset", 5)
-   0x08048658 <+244>:	seta   dl                                    
-   0x0804865b <+247>:	setb   al                                    
-   0x0804865e <+250>:	mov    ecx,edx                               
-   0x08048660 <+252>:	sub    cl,al                                 
-   0x08048662 <+254>:	mov    eax,ecx                               
-   0x08048664 <+256>:	movsx  eax,al                                
-   0x08048667 <+259>:	test   eax,eax                               
-   0x08048669 <+261>:	jne    0x8048678 <main+276>                  
+   0x08048658 <+244>:	seta   dl
+   0x0804865b <+247>:	setb   al
+   0x0804865e <+250>:	mov    ecx,edx
+   0x08048660 <+252>:	sub    cl,al
+   0x08048662 <+254>:	mov    eax,ecx
+   0x08048664 <+256>:	movsx  eax,al
+   0x08048667 <+259>:	test   eax,eax
+   0x08048669 <+261>:	jne    0x8048678 <main+276>
    0x0804866b <+263>:	mov    eax,ds:0x8049aac                      <-- address of auth global var
    0x08048670 <+268>:	mov    DWORD PTR [esp],eax
    0x08048673 <+271>:	call   0x8048420 <free@plt>
    0x08048678 <+276>:	lea    eax,[esp+0x20]                        <-- load address of buffer
    0x0804867c <+280>:	mov    edx,eax                               <-- put buffer in edx
-   0x0804867e <+282>:	mov    eax,0x8048825                         <-- put "service" in eax 
-   0x08048683 <+287>:	mov    ecx,0x6                               <-- put 6 ecx 
+   0x0804867e <+282>:	mov    eax,0x8048825                         <-- put "service" in eax
+   0x08048683 <+287>:	mov    ecx,0x6                               <-- put 6 ecx
    0x08048688 <+292>:	mov    esi,edx                               <-- put buffer in esi
    0x0804868a <+294>:	mov    edi,eax                               <-- put "service" as argument to strncmp
    0x0804868c <+296>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]<-- call to strncmp(buffer, "service", 6)
@@ -225,7 +225,7 @@ Dump of assembler code for function main:
    0x080486b5 <+337>:	lea    eax,[esp+0x20]                        <-- load address of buffer
    0x080486b9 <+341>:	mov    edx,eax                               <-- put buffer in edx
    0x080486bb <+343>:	mov    eax,0x804882d                         <-- put "login" in eax
-   0x080486c0 <+348>:	mov    ecx,0x5                               <-- put 5 in ecx 
+   0x080486c0 <+348>:	mov    ecx,0x5                               <-- put 5 in ecx
    0x080486c5 <+353>:	mov    esi,edx                               <-- put buffer in esi
    0x080486c7 <+355>:	mov    edi,eax                               <-- put "login" in edi
    0x080486c9 <+357>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]<-- call to strncmp(buffer, "login", 5)
@@ -252,7 +252,7 @@ Dump of assembler code for function main:
    0x08048717 <+435>:	mov    DWORD PTR [esp+0x4],0x1
    0x0804871f <+443>:	mov    DWORD PTR [esp],eax
    0x08048722 <+446>:	call   0x8048450 <fwrite@plt>
-   0x08048727 <+451>:	jmp    0x8048574 <main+16>                   <-- Infinitely loop 
+   0x08048727 <+451>:	jmp    0x8048574 <main+16>                   <-- Infinitely loop
    0x0804872c <+456>:	nop
    0x0804872d <+457>:	mov    eax,0x0
    0x08048732 <+462>:	lea    esp,[ebp-0x8]
@@ -263,9 +263,9 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
-### **WELL**... 
+### **WELL**...
 
-This is quite a HEFTY main... 
+This is quite a HEFTY main...
 
 Let's proceed in chunks to decipher what's going on.
 
@@ -297,16 +297,16 @@ Here are the most notable information we can gather at this point:
 0x080485dd <+121>:	movsx  eax,al                                   <-- Convert al to signed int (en strncmp)
 0x080485e0 <+124>:	test   eax,eax                                  <-- Test if optimized inline strncmp equal to 0
 [...]
-0x08048656 <+242>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]   <-- if (!strncmp(buffer, "reset", 5)) 
-0x08048658 <+244>:	seta   dl                                       
-0x0804865b <+247>:	setb   al                                       
-0x0804865e <+250>:	mov    ecx,edx                                  
-0x08048660 <+252>:	sub    cl,al                                    
-0x08048662 <+254>:	mov    eax,ecx                                  
-0x08048664 <+256>:	movsx  eax,al                                   
-0x08048667 <+259>:	test   eax,eax                                  
+0x08048656 <+242>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]   <-- if (!strncmp(buffer, "reset", 5))
+0x08048658 <+244>:	seta   dl
+0x0804865b <+247>:	setb   al
+0x0804865e <+250>:	mov    ecx,edx
+0x08048660 <+252>:	sub    cl,al
+0x08048662 <+254>:	mov    eax,ecx
+0x08048664 <+256>:	movsx  eax,al
+0x08048667 <+259>:	test   eax,eax
 [...]
-0x0804868c <+296>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]   <-- if (!strncmp(buffer, "service", 6)) 
+0x0804868c <+296>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]   <-- if (!strncmp(buffer, "service", 6))
 0x0804868e <+298>:	seta   dl
 0x08048691 <+301>:	setb   al
 0x08048694 <+304>:	mov    ecx,edx
@@ -315,7 +315,7 @@ Here are the most notable information we can gather at this point:
 0x0804869a <+310>:	movsx  eax,al
 0x0804869d <+313>:	test   eax,eax
 [...]
-0x080486c9 <+357>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]  <-- if (!strncmp(buffer, "login", 5)) 
+0x080486c9 <+357>:	repz cmps BYTE PTR ds:[esi],BYTE PTR es:[edi]  <-- if (!strncmp(buffer, "login", 5))
 0x080486cb <+359>:	seta   dl
 0x080486ce <+362>:	setb   al
 0x080486d1 <+365>:	mov    ecx,edx
@@ -338,7 +338,7 @@ Here are the most notable information we can gather at this point:
            ```
     - `reset` leads to a call to call to `free(auth)` as seen here:
 	```gdb
-        0x0804866b <+263>:	mov    eax,ds:0x8049aac      <-- address of auth symbol 
+        0x0804866b <+263>:	mov    eax,ds:0x8049aac      <-- address of auth symbol
         0x08048670 <+268>:	mov    DWORD PTR [esp],eax
         0x08048673 <+271>:	call   0x8048420 <free@plt>
 	```
