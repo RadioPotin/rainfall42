@@ -15,7 +15,7 @@ BEGIN CLASS N(int i)
   }
 
   setAnnotation(char *s) {
-    call memcpy(this->buffer, s, strlen(str));
+    call memcpy(this->buffer, s, strlen(s));
   }
 END CLASS N
 
@@ -26,5 +26,7 @@ BEGIN main(int argc, char **argv)
 
   N *n1 = new N(5)
   N *n2 = new N(6)
+
+  n1->setAnnotation(av[1]);
 
 END main
