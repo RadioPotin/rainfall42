@@ -1,5 +1,5 @@
-begin p(char *buffer, char *dash)
-    // 4020
+begin p(char *input, char *dash)
+    // 4120
     char tmp[4096];
     char *newline;
 
@@ -10,34 +10,34 @@ begin p(char *buffer, char *dash)
     newline = strchr(tmp, '\n');
     *newline = '\0';
 
-    strncpy(buffer, tmp, 20);
+    strncpy(input, tmp, 20);
 
 end p
 
 
-begin pp(char *s)
+begin pp(char *buffer)
     // 80
     char *dash = " - ";
-    char a[20];
-    char b[20];
+    char input_1[20];
+    char input_2[20];
 
-    p(a, dash);
-    p(b, dash)
+    p(input_1, dash);
+    p(input_2, dash)
 
 
-    strcpy(s, a);
+    strcpy(buffer, input_1);
 
-    s[strlen(s)] = ' ';
+    buffer[strlen(buffer)] = ' ';
 
-    strcat(s, b);
+    strcat(buffer, input_2);
 
 end pp
 
 begin main()
 
-    char  s[54];
+    char  buffer[54];
 
-    pp(s);
-    puts(s);
+    pp(buffer);
+    puts(buffer);
 
 end main
