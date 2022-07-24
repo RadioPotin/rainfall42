@@ -1,18 +1,37 @@
-begin main(int ac, char *argv[])
+int main(int ac, char *argv[])
 {
-    //64 Bytes
-    int i = 0; //(4 Bytes)
+    char            buffer[40];
+    unsigned int    i;
 
-    i = atoi(argv[1])
+    i = atoi(argv[1]);
 
     if (i <= 9)
     {
         i *= 4;
-        
+
+        memcpy(buffer, argv[2], i);
+
+        if (i == 1464814662)
+        {
+            execl("/bin/sh", "sh", 0);
+            return (0);
+        }
+
     }
 
-
-
-
-    return (1)
+    return (1);
 }
+
+// HIGH
+// ^
+// | * ~       char *argv[] |               + 8 bytes
+// | * ~          int argc  |               + 4 bytes
+// | * ~     return address |               + 4 bytes
+// | <-- EBP
+// | * ~    unsigned int i  |               + 4 bytes
+// | * ~   char buffer[40]  | ( 4 + 40 )    + 44 bytes
+// | <-- ESP                | -> Total      = 64 bytes
+// |
+// ...
+// |
+// LOW
