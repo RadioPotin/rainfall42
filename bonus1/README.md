@@ -115,7 +115,7 @@ We receive a signed integer from the `atoi()` function, but we pass a unsigned i
 
 So we must ensure to have a correct value for the `i` variable as a signed integer and pass the first check and still trigger a buffer overflow.
 
-## Overflowing the buffer 
+### Overflowing the buffer 
 
 Since the integer is at the higher memory address than the buffer, we can easily overflow this address and pass the condition `if (i == 1464814662)`.
 
