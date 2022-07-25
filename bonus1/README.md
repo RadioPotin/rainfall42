@@ -30,65 +30,10 @@ Lets dig into it
 
 ## gdb
 
-Let's find all the functions in the binary:
+After running `info variables` and `info functions` in gdb, we see no unknown symbols.
 
-```gdb
-gdb-peda$ info functions
-All defined functions:
-
-Non-debugging symbols:
-0x080482d4  _init
-0x08048320  memcpy
-0x08048320  memcpy@plt
-0x08048330  __gmon_start__
-0x08048330  __gmon_start__@plt
-0x08048340  __libc_start_main
-0x08048340  __libc_start_main@plt
-0x08048350  execl
-0x08048350  execl@plt
-0x08048360  atoi
-0x08048360  atoi@plt
-0x08048370  _start
-0x080483a0  __do_global_dtors_aux
-0x08048400  frame_dummy
-0x08048424  main
-0x080484b0  __libc_csu_init
-0x08048520  __libc_csu_fini
-0x08048522  __i686.get_pc_thunk.bx
-0x08048530  __do_global_ctors_aux
-0x0804855c  _fini
-```
-
-No user-defined functions are called by the binary.
-
-And what about the variables ?
-
-```gdb
-gdb-peda$ info variables
-All defined variables:
-
-Non-debugging symbols:
-0x08048578  _fp_hw
-0x0804857c  _IO_stdin_used
-0x08048680  __FRAME_END__
-0x08049684  __CTOR_LIST__
-0x08049684  __init_array_end
-0x08049684  __init_array_start
-0x08049688  __CTOR_END__
-0x0804968c  __DTOR_LIST__
-0x08049690  __DTOR_END__
-0x08049694  __JCR_END__
-0x08049694  __JCR_LIST__
-0x08049698  _DYNAMIC
-0x08049764  _GLOBAL_OFFSET_TABLE_
-0x08049784  __data_start
-0x08049784  data_start
-0x08049788  __dso_handle
-0x0804978c  completed.6159
-0x08049790  dtor_idx.6161
-```
-
-There are no user-defined global variables neither.
+Conclusion:
+There are no user-defined function or global variables neither.
 
 Ok let's look at `main`
 
@@ -138,15 +83,13 @@ We clearly can see that the `main` function is calling `execl` with the `/bin/sh
 
 But how can we get there ?
 
-### First step 
+### Underflowing the integer 
 
 Our first argument to this binary is passed to `i = atoi(argv[1])`.
 
 Then if our first argument is at most equal to `9`.
 
 We can go further.
-
-### Second step
 
 Then the value returned by `atoi()` is multiplied by `4`.
 
@@ -174,13 +117,15 @@ So we must ensure to have a correct value for the `i` variable as a signed integ
 
 ## Overflowing the buffer 
 
-Since the integer is at the higher memory address than the buffer, we can easily overflow this address and bypass the condition for i = 1464814662.
+Since the integer is at the higher memory address than the buffer, we can easily overflow this address and pass the condition `if (i == 1464814662)`.
 
 So technically we need more than 40 bytes to overflow the buffer and be able to overwrite the integer.
 
 But how can we pass a positive value to memcpy with a negative integer as input ?
 
-We know that `uint_max = 2^32 - 1 = 4294967295`. So if we add `1` to `4294967295` we get 0 when casting it to a unsigned integer.
+We know that `uint_max = 2^32 - 1 = 4294967295`.
+
+So if we add `1` to `4294967295` we get 0 when casting it to a unsigned integer.
 
 Let's divide by `4` to get the integer.
 
@@ -217,6 +162,20 @@ Segmentation fault (core dumped)
 ```
 
 We can now overwrite the integer with an exact value and a padding of 40 bytes.
+
+## recap
+
+2 arguments are passed to the program:
+1. argv[1] is fed to `atoi()`
+   - a variable `i` of type `unsigned int `is used to store the returned value
+   - it is then casted to `int` and then tested to be `<=` to 9.
+      - false -> return 1
+      - true -> continue with program
+	 - multiply that value by 4 and call `memcpy`
+2. argv[2] is fed to `memcpy` as follows: `memcpy(buffer, argv[2], i);`
+   - as we know this function is prone to security exploits, we just need to find the correct value for `i` in order to correctly overflow the destination `buffer`.
+   - After a bit of calculations we find a value (`-1073741809`) that not only allows us to pass de `<= 9` test, but also overflow the buffer used in the call to `memcpy` with a value of `64`.
+   - Once we have managed to overflow the buffer, we just have to insert with the right padding a specific value at the address of the `i` variable in order to get to the call to `execv("/bin.sh", "sh", 0);`
 
 ## Exploit
 
