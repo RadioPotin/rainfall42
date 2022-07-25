@@ -245,7 +245,7 @@ There is another way though. We could use an environment variable to store our s
 This would just require us to:
 1. find a shellcode that opens a shell
    - Lets use the one from the previous exercise since we know it works
-2. store that shellcode in in and env variable
+2. store that shellcode in an env variable
    - export SHELLCODE_ENV=<shellcode>
 3. find the address of said variable and make `strcat` do all the heavy lifting
    - Just print address of variable in gdb
