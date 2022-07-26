@@ -93,9 +93,11 @@ We can go further.
 
 Then the value returned by `atoi()` is multiplied by `4`.
 
-So `i` becomes `i * 4`.
+So `i` becomes `i * 4`. 
 
 Then we have `memcpy(buffer, argv[2], i)`.
+
+The thing to note here is that `memcpy` takes a `size_t` as third argument and therefor implicitly casts the value it is given to an `unsigned` type. This allows us to willingly underflow it.
 
 We pass our second argument to the binary and it is copied byte after byte to the `buffer`.
 
@@ -167,11 +169,11 @@ We can now overwrite the integer with an exact value and a padding of 40 bytes.
 
 2 arguments are passed to the program:
 1. argv[1] is fed to `atoi()`
-   - a variable `i` of type `unsigned int `is used to store the returned value
-   - it is then casted to `int` and then tested to be `<=` to 9.
+   - a variable `i` of type `int `is used to store the returned value
+   - it is then tested to be `<=` to 9.
       - false -> return 1
       - true -> continue with program
-	 - multiply that value by 4 and call `memcpy`
+	 - multiply that value by 4 and call `memcpy`. Though `memcpy` takes a `size_t` as argument and therefor implicitly casts that value to an `unsigned` type.
 2. argv[2] is fed to `memcpy` as follows: `memcpy(buffer, argv[2], i);`
    - as we know this function is prone to security exploits, we just need to find the correct value for `i` in order to correctly overflow the destination `buffer`.
    - After a bit of calculations we find a value (`-1073741809`) that not only allows us to pass de `<= 9` test, but also overflow the buffer used in the call to `memcpy` with a value of `64`.

@@ -1,15 +1,15 @@
 int main(int ac, char *argv[])
 {
     char            buffer[40];
-    unsigned int    i;
+    int    i;
 
     i = atoi(argv[1]);
 
-    if ((int)i <= 9)
+    if (i <= 9)
     {
         i *= 4;
 
-        memcpy(buffer, argv[2], i);
+        memcpy(buffer, argv[2], (size_t)i);
 
         if (i == 1464814662)
         {
