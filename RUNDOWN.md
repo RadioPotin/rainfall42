@@ -101,7 +101,7 @@ We just need to get offset of buffer with pattern generator. (offset of 80 bytes
 
 Choose working shellcode from Database (28 bytes long), subtract from buffer offset the length of the shellcode to get the length of the padding (80 - 28 = 52)
 
-Send [`shellcode + padding + address of shellcode`] to `strdup()`
+Send [`shellcode + padding + (starting address of the heap)+8`] to `strdup()` to jump to the shellcode at runtime.
 
 ```shell-session
 level2@RainFall:~$
@@ -116,7 +116,33 @@ cat /home/user/level3/.pass
 
 # level3
 ## Type of exploit
+
+Format String Attack: no variadic argument to printf + no sanitization of user-defined conversion string fed to printf allows to print and edit values in memory.
+
+Lack of ASLR makes it easy to find address of a given symbol, namely `m()`.
+
 ## Details of level3
+
+Binary naturally opens a shell but an `if` statement prevent us from going there.
+
+There is a comparison between a global symbol (`m()`) and a hardcoded value (`64`). `m()` is outside the control flow, so no register injection here.
+
+Program takes input and gives it to printf, with no other argument.
+
+We can use printf features to edit a given address with an arbitrary value:
+- option `$` that is used with an integer i to access the ith argument positionned after printf (`%4$s` will apply `%s` to argument 4) 
+- type conversion `%n` that inserts an integer corresponding to the number of bytes written so far in the type conversion format. (`123%2$n` will insert 3 in 2nd argument to printf)
+
+Since we have the address of function `m()`, and we know the position of the format string as argument to printf, we can compose a conversion string to insert an arbitrary value at that specific location:
+
+[`address of m (4 bytes) + %60c (60 bytes) + %4$n`]-> addres of m is now equal to 64
+```shell-session
+level3@RainFall:~$ (python -c "print '\x8c\x98\x04\x08' + '%60c' + '%4\$n'"; cat -) | ./level3
+
+Wait what?!
+cat /home/user/$(whoami)/.pass
+b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
+```
 
 # level4
 ## Type of exploit
