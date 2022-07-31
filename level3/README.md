@@ -43,7 +43,7 @@ Non-debugging symbols:
 0x08049880  stdout@@GLIBC_2.0
 0x08049884  completed.6159
 0x08049888  dtor_idx.6161
-0x0804988c  m                    <------ global variable m, in the bss section of object
+0x0804988c  m                                               <-- Global variable m, in the bss section of object
 ```
 
 Now lets look at the functions of the binary
@@ -54,7 +54,7 @@ Dump of assembler code for function main:
    0x0804851a <+0>:	push   ebp
    0x0804851b <+1>:	mov    ebp,esp
    0x0804851d <+3>:	and    esp,0xfffffff0
-   0x08048520 <+6>:	call   0x80484a4 <v>    <---- call to v
+   0x08048520 <+6>:	call   0x80484a4 <v>                   <-- Call to v()
    0x08048525 <+11>:	leave
    0x08048526 <+12>:	ret
 End of assembler dump.
@@ -62,29 +62,29 @@ gdb-peda$ disas v
 Dump of assembler code for function v:
    0x080484a4 <+0>:	push   ebp
    0x080484a5 <+1>:	mov    ebp,esp
-   0x080484a7 <+3>:	sub    esp,0x218            <----- allocation of a buffer of 520
-   0x080484ad <+9>:	mov    eax,ds:0x8049860
-   0x080484b2 <+14>:	mov    DWORD PTR [esp+0x8],eax
-   0x080484b6 <+18>:	mov    DWORD PTR [esp+0x4],0x200  <------- Offset of same buffer to 512
-   0x080484be <+26>:	lea    eax,[ebp-0x208]
-   0x080484c4 <+32>:	mov    DWORD PTR [esp],eax
-   0x080484c7 <+35>:	call   0x80483a0 <fgets@plt>      <------ Call to fgets into esp
-   0x080484cc <+40>:	lea    eax,[ebp-0x208]
-   0x080484d2 <+46>:	mov    DWORD PTR [esp],eax
-   0x080484d5 <+49>:	call   0x8048390 <printf@plt> <---- Call to printf with esp as conv string
-   0x080484da <+54>:	mov    eax,ds:0x804988c
-   0x080484df <+59>:	cmp    eax,0x40              <----- conditionnal jump on the value of variable m and the value 64
-   0x080484e2 <+62>:	jne    0x8048518 <v+116>
-   0x080484e4 <+64>:	mov    eax,ds:0x8049880
+   0x080484a7 <+3>:	sub    esp,0x218                       <-- Space of 536 bytes allocated for the stack frame
+   0x080484ad <+9>:	mov    eax,ds:0x8049860                <-- Load of stdin
+   0x080484b2 <+14>:	mov    DWORD PTR [esp+0x8],eax         <-- Set stdin as 3rd argument to fgets()
+   0x080484b6 <+18>:	mov    DWORD PTR [esp+0x4],0x200       <-- Set 520 as 2nd argument to fgets()
+   0x080484be <+26>:	lea    eax,[ebp-0x208]                 <-- Load char buffer[520]
+   0x080484c4 <+32>:	mov    DWORD PTR [esp],eax             <-- Set char buffer as 1st argument to fgets()
+   0x080484c7 <+35>:	call   0x80483a0 <fgets@plt>           <-- Call to fgets(buffer, 0x200, stdin)
+   0x080484cc <+40>:	lea    eax,[ebp-0x208]                 <-- Load char buffer[520]
+   0x080484d2 <+46>:	mov    DWORD PTR [esp],eax             <-- Set char buffer as 1st argument to printf()
+   0x080484d5 <+49>:	call   0x8048390 <printf@plt>          <-- Call to printf with esp as conv string
+   0x080484da <+54>:	mov    eax,ds:0x804988c                <-- Load global variable m
+   0x080484df <+59>:	cmp    eax,0x40                        <-- Compate m with 0x40
+   0x080484e2 <+62>:	jne    0x8048518 <v+116>               <-- If not equivalent jump to v+116
+   0x080484e4 <+64>:	mov    eax,ds:0x8049880                <-- Load of stdout
    0x080484e9 <+69>:	mov    edx,eax
-   0x080484eb <+71>:	mov    eax,0x8048600
-   0x080484f0 <+76>:	mov    DWORD PTR [esp+0xc],edx
-   0x080484f4 <+80>:	mov    DWORD PTR [esp+0x8],0xc
-   0x080484fc <+88>:	mov    DWORD PTR [esp+0x4],0x1
-   0x08048504 <+96>:	mov    DWORD PTR [esp],eax
-   0x08048507 <+99>:	call   0x80483b0 <fwrite@plt>
-   0x0804850c <+104>:	mov    DWORD PTR [esp],0x804860d   <---- "/bin/sh" fed to
-   0x08048513 <+111>:	call   0x80483c0 <system@plt>      <---- Call to system function
+   0x080484eb <+71>:	mov    eax,0x8048600                   <-- Load of string "Wait what?!\n"
+   0x080484f0 <+76>:	mov    DWORD PTR [esp+0xc],edx         <-- Set stdout as 4th argument to fwrite()
+   0x080484f4 <+80>:	mov    DWORD PTR [esp+0x8],0xc         <-- Set 0xc as 3rd argument to fwrite()
+   0x080484fc <+88>:	mov    DWORD PTR [esp+0x4],0x1         <-- Set 1 as 2nd argument to fwrite()
+   0x08048504 <+96>:	mov    DWORD PTR [esp],eax             <-- Set string "Wait what?!\n" as 1st argument to fwrite()
+   0x08048507 <+99>:	call   0x80483b0 <fwrite@plt>          <-- Call to fwrite("Wait what?!\n", 1, 0xc, stdout)
+   0x0804850c <+104>:	mov    DWORD PTR [esp],0x804860d    <-- Load "/bin/sh" as 1st argument to system()
+   0x08048513 <+111>:	call   0x80483c0 <system@plt>       <-- Call to system("/bin/sh")
    0x08048518 <+116>:	leave
    0x08048519 <+117>:	ret
 End of assembler dump.
