@@ -27,7 +27,7 @@ Dump of assembler code for function main:
    0x0804853f <+0>:	push   ebp
    0x08048540 <+1>:	mov    ebp,esp
    0x08048542 <+3>:	and    esp,0xfffffff0
-   0x08048545 <+6>:	call   0x80484d4 <p>            <----- Call to function p
+   0x08048545 <+6>:	call   0x80484d4 <p>             <-- Call to function p()
    0x0804854a <+11>:	leave
    0x0804854b <+12>:	ret
 End of assembler dump.
@@ -35,32 +35,32 @@ gdb-peda$ disas p
 Dump of assembler code for function p:
    0x080484d4 <+0>:	push   ebp
    0x080484d5 <+1>:	mov    ebp,esp
-   0x080484d7 <+3>:	sub    esp,0x68
-   0x080484da <+6>:	mov    eax,ds:0x8049860
-   0x080484df <+11>:	mov    DWORD PTR [esp],eax
-   0x080484e2 <+14>:	call   0x80483b0 <fflush@plt>  <----- Call to fflush
-   0x080484e7 <+19>:	lea    eax,[ebp-0x4c]
-   0x080484ea <+22>:	mov    DWORD PTR [esp],eax
-   0x080484ed <+25>:	call   0x80483c0 <gets@plt>    <----- Call to gets
-   0x080484f2 <+30>:	mov    eax,DWORD PTR [ebp+0x4]
+   0x080484d7 <+3>:	sub    esp,0x68                  <-- Space of 80 bytes allocated for the stack frame
+   0x080484da <+6>:	mov    eax,ds:0x8049860          <-- Load of stdout to eax
+   0x080484df <+11>:	mov    DWORD PTR [esp],eax       <-- Set stdout as argument to fflush()
+   0x080484e2 <+14>:	call   0x80483b0 <fflush@plt>    <-- Call to fflush(stdout)
+   0x080484e7 <+19>:	lea    eax,[ebp-0x4c]            <-- Load of buffer[76]
+   0x080484ea <+22>:	mov    DWORD PTR [esp],eax       <-- Set buffer as argument to gets()
+   0x080484ed <+25>:	call   0x80483c0 <gets@plt>      <-- Call to gets(buffer)
+   0x080484f2 <+30>:	mov    eax,DWORD PTR [ebp+0x4]   <-- Load int memory
    0x080484f5 <+33>:	mov    DWORD PTR [ebp-0xc],eax
    0x080484f8 <+36>:	mov    eax,DWORD PTR [ebp-0xc]
-   0x080484fb <+39>:	and    eax,0xb0000000          <----- Logical binary operation
-   0x08048500 <+44>:	cmp    eax,0xb0000000
-   0x08048505 <+49>:	jne    0x8048527 <p+83>        <----- Conditional jump to p+83
-   0x08048507 <+51>:	mov    eax,0x8048620
-   0x0804850c <+56>:	mov    edx,DWORD PTR [ebp-0xc]
-   0x0804850f <+59>:	mov    DWORD PTR [esp+0x4],edx
-   0x08048513 <+63>:	mov    DWORD PTR [esp],eax
-   0x08048516 <+66>:	call   0x80483a0 <printf@plt>  <----- Call to printf
-   0x0804851b <+71>:	mov    DWORD PTR [esp],0x1
-   0x08048522 <+78>:	call   0x80483d0 <_exit@plt>   <----- Call to exit
-   0x08048527 <+83>:	lea    eax,[ebp-0x4c]
-   0x0804852a <+86>:	mov    DWORD PTR [esp],eax
-   0x0804852d <+89>:	call   0x80483f0 <puts@plt>    <----- Call to puts
-   0x08048532 <+94>:	lea    eax,[ebp-0x4c]
-   0x08048535 <+97>:	mov    DWORD PTR [esp],eax
-   0x08048538 <+100>:	call   0x80483e0 <strdup@plt>  <----- Call to strdup
+   0x080484fb <+39>:	and    eax,0xb0000000            <-- Add 0xb0000000
+   0x08048500 <+44>:	cmp    eax,0xb0000000            <-- Compare memory with 0xb0000000
+   0x08048505 <+49>:	jne    0x8048527 <p+83>          <-- If not equivalent, jump to p+83
+   0x08048507 <+51>:	mov    eax,0x8048620             <-- Set "(%p)\n"
+   0x0804850c <+56>:	mov    edx,DWORD PTR [ebp-0xc]   <-- Load int memory
+   0x0804850f <+59>:	mov    DWORD PTR [esp+0x4],edx   <-- Set int memory as argument to printf()
+   0x08048513 <+63>:	mov    DWORD PTR [esp],eax       <-- Set "(%p)\n" as argument to printf()
+   0x08048516 <+66>:	call   0x80483a0 <printf@plt>    <-- Call to printf("(%p)\n", &memory)
+   0x0804851b <+71>:	mov    DWORD PTR [esp],0x1       <-- Set 1 as argument to exit()
+   0x08048522 <+78>:	call   0x80483d0 <_exit@plt>     <-- Call to exit(1)
+   0x08048527 <+83>:	lea    eax,[ebp-0x4c]            <-- Load of buffer[76]
+   0x0804852a <+86>:	mov    DWORD PTR [esp],eax       <-- Set buffer as argument to gets()
+   0x0804852d <+89>:	call   0x80483f0 <puts@plt>      <-- Call to puts(buffer)
+   0x08048532 <+94>:	lea    eax,[ebp-0x4c]            <-- Load of buffer[76]
+   0x08048535 <+97>:	mov    DWORD PTR [esp],eax       <-- Set buffer as argument to gets()
+   0x08048538 <+100>:	call   0x80483e0 <strdup@plt> <-- Call to strdup(buffer)
    0x0804853d <+105>:	leave
    0x0804853e <+106>:	ret
 End of assembler dump.
@@ -75,7 +75,7 @@ Indeed there could be several ways for us to make this executable open a shell f
 
 We will try the third one.
 
-### Heap based shellcode 
+### Heap based shellcode
 
 We know this is possible because there is a function call (strdup) that will allocate on the HEAP a chunk of data that we may very well have tailored to call the wanted functions from the libc.
 
@@ -139,7 +139,7 @@ gdb-peda$
 Okay now, last part before we can say we have officially hacked that binary: the shellcode.
 
 Our shellcode must be one to call a `/bin/sh` binary to open a shell for us.
-There are plenty available on [shellstorm](http://shell-storm.org/), so it doesn't really matter which one we take as long as it's at least smaller that 80 bytes. (because we need room for the HEAP address we have found before) 
+There are plenty available on [shellstorm](http://shell-storm.org/), so it doesn't really matter which one we take as long as it's at least smaller that 80 bytes. (because we need room for the HEAP address we have found before)
 
 Our shellcode is found [here](http://shell-storm.org/shellcode/files/shellcode-811.php) and it is 28 bytes long. That means that for the overflow to happen we must concatenate a 52 byte padding to the shell code, and then the address we mentionned before.
 
