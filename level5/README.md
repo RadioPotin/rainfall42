@@ -40,18 +40,18 @@ gdb-peda$ disas n
 Dump of assembler code for function n:
    0x080484c2 <+0>:	push   ebp
    0x080484c3 <+1>:	mov    ebp,esp
-   0x080484c5 <+3>:	sub    esp,0x218
-   0x080484cb <+9>:	mov    eax,ds:0x8049848
-   0x080484d0 <+14>:	mov    DWORD PTR [esp+0x8],eax
-   0x080484d4 <+18>:	mov    DWORD PTR [esp+0x4],0x200
-   0x080484dc <+26>:	lea    eax,[ebp-0x208]
-   0x080484e2 <+32>:	mov    DWORD PTR [esp],eax
-   0x080484e5 <+35>:	call   0x80483a0 <fgets@plt>            <-- Call to fget into esp
-   0x080484ea <+40>:	lea    eax,[ebp-0x208]
-   0x080484f0 <+46>:	mov    DWORD PTR [esp],eax
-   0x080484f3 <+49>:	call   0x8048380 <printf@plt>           <-- Call to printf with esp as conv string (?)
-   0x080484f8 <+54>:	mov    DWORD PTR [esp],0x1
-   0x080484ff <+61>:	call   0x80483d0 <exit@plt>
+   0x080484c5 <+3>:	sub    esp,0x218                       <-- Space of 536 bytes allocated for the stack frame
+   0x080484cb <+9>:	mov    eax,ds:0x8049848                <-- Load of stdin
+   0x080484d0 <+14>:	mov    DWORD PTR [esp+0x8],eax         <-- Set stdin as 3rd argument to fgets()
+   0x080484d4 <+18>:	mov    DWORD PTR [esp+0x4],0x200       <-- Set 520 as 2nd argument to fgets()
+   0x080484dc <+26>:	lea    eax,[ebp-0x208]                 <-- Load char buffer[520]
+   0x080484e2 <+32>:	mov    DWORD PTR [esp],eax             <-- Set char buffer as 1st argument to fgets()
+   0x080484e5 <+35>:	call   0x80483a0 <fgets@plt>           <-- Call to fgets(buffer, 0x200, stdin)
+   0x080484ea <+40>:	lea    eax,[ebp-0x208]                 <-- Load char buffer[520]
+   0x080484f0 <+46>:	mov    DWORD PTR [esp],eax             <-- Set char buffer as 1st argument to printf()
+   0x080484f3 <+49>:	call   0x8048380 <printf@plt>          <-- call to prinf(buffer)
+   0x080484f8 <+54>:	mov    DWORD PTR [esp],0x1             <-- Set 1 as 1st argument to exit()
+   0x080484ff <+61>:	call   0x80483d0 <exit@plt>            <-- Call to exit(1)
 End of assembler dump.
 ```
 
@@ -80,7 +80,7 @@ Non-debugging symbols:
 0x080483f0  _start
 0x08048420  __do_global_dtors_aux
 0x08048480  frame_dummy
-0x080484a4  o                                          <-- An other function ! `o`
+0x080484a4  o                                               <-- An other function ! `o`
 0x080484c2  n
 0x08048504  main
 0x08048520  __libc_csu_init
@@ -99,11 +99,11 @@ gdb-peda$ disas o
 Dump of assembler code for function o:
    0x080484a4 <+0>:	push   ebp
    0x080484a5 <+1>:	mov    ebp,esp
-   0x080484a7 <+3>:	sub    esp,0x18
-   0x080484aa <+6>:	mov    DWORD PTR [esp],0x80485f0
-   0x080484b1 <+13>:	call   0x80483b0 <system@plt>           <-- Call to system() with string "/bin/sh" 
-   0x080484b6 <+18>:	mov    DWORD PTR [esp],0x1
-   0x080484bd <+25>:	call   0x8048390 <_exit@plt>
+   0x080484a7 <+3>:	sub    esp,0x18                        <-- Space of 24 bytes allocated for the stack frame
+   0x080484aa <+6>:	mov    DWORD PTR [esp],0x80485f0       <-- Set "/bin/sh" as 1st argument to system()
+   0x080484b1 <+13>:	call   0x80483b0 <system@plt>          <-- Call to system("/bin/sh")
+   0x080484b6 <+18>:	mov    DWORD PTR [esp],0x1             <-- Set 1 as 1st argument to exit()
+   0x080484bd <+25>:	call   0x8048390 <_exit@plt>           <-- Call to exit(1)
 End of assembler dump
 ```
 
@@ -131,7 +131,7 @@ Non-debugging symbols:
 0x080483b0  system@plt
 0x080483c0  __gmon_start__
 0x080483c0  __gmon_start__@plt
-0x080483d0  exit                         <--- exit function
+0x080483d0  exit                                            <--- exit function
 0x080483d0  exit@plt
 0x080483e0  __libc_start_main
 0x080483e0  __libc_start_main@plt
@@ -161,11 +161,11 @@ Dump of assembler code for function n:
    0x080484f0 <+46>:	mov    DWORD PTR [esp],eax
    0x080484f3 <+49>:	call   0x8048380 <printf@plt>
    0x080484f8 <+54>:	mov    DWORD PTR [esp],0x1
-   0x080484ff <+61>:	call   0x80483d0 <exit@plt>       <-- pointer to the address returned by the PLT
+   0x080484ff <+61>:	call   0x80483d0 <exit@plt>            <-- pointer to the address returned by the PLT
 End of assembler dump.
 gdb-peda$ disas 0x80483d0
 Dump of assembler code for function exit@plt:
-   0x080483d0 <+0>:	jmp    DWORD PTR ds:0x8049838     <- Dereferenced pointer to exit function call address, returned by the GOT
+   0x080483d0 <+0>:	jmp    DWORD PTR ds:0x8049838          <- Dereferenced pointer to exit function call address, returned by the GOT
    0x080483d6 <+6>:	push   0x28
    0x080483db <+11>:	jmp    0x8048370
 End of assembler dump.
@@ -175,7 +175,7 @@ We know that, when calling a dynamically linked function, including everything f
 
 When execution sends a symbol to the PLT, the PLT asks the GOT for the actual address of that symbol (functions, etcetc...).
 
-Therefor, the GOT returns a pointer to the proper address of that symbol. 
+Therefor, the GOT returns a pointer to the proper address of that symbol.
 
 The only thing is that the value pointed to by that pointer, thanks to Format String Exploits, can be overwritten before the runtime evaluates that address, and will therefor resolve to an arbitrary (or not) function call.
 
