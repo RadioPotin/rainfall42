@@ -2,16 +2,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void run(void)
+void  run(void)
 {
-  fwrite("Good... Wait what?\n", 19, 1, stdout);
+  fwrite("Good... Wait what?\n", 1, 0x13, stdout);
   system("/bin/sh");
   return;
 }
 
-int main(void)
+int   main(void)
 {
-  static char input[76];
+  char input[76];
+
   gets(input);
-  return 0;
+  return (0);
 }
