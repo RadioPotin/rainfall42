@@ -42,7 +42,7 @@ Non-debugging symbols:
 0x08049804  stdin@@GLIBC_2.0
 0x08049808  completed.6159
 0x0804980c  dtor_idx.6161
-0x08049810  m                                                   <-- m variable
+0x08049810  m                                                  <-- Global m variable
 gdb-peda$
 ```
 
@@ -53,7 +53,7 @@ level4@RainFall:~$ objdump -x level4
 [...]
 08048390 g     F .text	00000000              _start
 08048588 g     O .rodata	00000004              _fp_hw
-08049810 g     O .bss	00000004              m                 <-- m variable
+08049810 g     O .bss	00000004              m                <-- Global m variable
 08049804 g       *ABS*	00000000              __bss_start
 080484a7 g     F .text	0000000d              main
 [...]
@@ -73,7 +73,7 @@ Dump of assembler code for function main:
    0x080484a7 <+0>:	push   ebp
    0x080484a8 <+1>:	mov    ebp,esp
    0x080484aa <+3>:	and    esp,0xfffffff0
-   0x080484ad <+6>:	call   0x8048457 <n>                        <-- Call to n function
+   0x080484ad <+6>:	call   0x8048457 <n>                      <-- Call to n() function
    0x080484b2 <+11>:	leave
    0x080484b3 <+12>:	ret
 End of assembler dump.
@@ -87,21 +87,21 @@ gdb-peda$ pdisas n
 Dump of assembler code for function n:
    0x08048457 <+0>:	push   ebp
    0x08048458 <+1>:	mov    ebp,esp
-   0x0804845a <+3>:	sub    esp,0x218                            <-- Allocation of a buffer of 520
-   0x08048460 <+9>:	mov    eax,ds:0x8049804
-   0x08048465 <+14>:	mov    DWORD PTR [esp+0x8],eax
-   0x08048469 <+18>:	mov    DWORD PTR [esp+0x4],0x200        <-- Offset of same buffer to 512
-   0x08048471 <+26>:	lea    eax,[ebp-0x208]
-   0x08048477 <+32>:	mov    DWORD PTR [esp],eax
-   0x0804847a <+35>:	call   0x8048350 <fgets@plt>            <-- Call to fget into esp
-   0x0804847f <+40>:	lea    eax,[ebp-0x208]
-   0x08048485 <+46>:	mov    DWORD PTR [esp],eax
-   0x08048488 <+49>:	call   0x8048444 <p>                    <-- Call to an other function `p`
-   0x0804848d <+54>:	mov    eax,ds:0x8049810
-   0x08048492 <+59>:	cmp    eax,0x1025544                    <-- Conditional jump if `m` equal 16930116
-   0x08048497 <+64>:	jne    0x80484a5 <n+78>
-   0x08048499 <+66>:	mov    DWORD PTR [esp],0x8048590        <-- "/bin/cat /home/user/level5/.pass" fed to
-   0x080484a0 <+73>:	call   0x8048360 <system@plt>           <-- Call to system function
+   0x0804845a <+3>:	sub    esp,0x218                          <-- Space of 536 bytes allocated for the stack
+   0x08048460 <+9>:	mov    eax,ds:0x8049804                   <-- Load of stdin
+   0x08048465 <+14>:	mov    DWORD PTR [esp+0x8],eax            <-- Set stdin as 3rd argument to fgets()
+   0x08048469 <+18>:	mov    DWORD PTR [esp+0x4],0x200          <-- Set 0x200 as 2nd argument to fgets()
+   0x08048471 <+26>:	lea    eax,[ebp-0x208]                    <-- Load char buffer[520]
+   0x08048477 <+32>:	mov    DWORD PTR [esp],eax                <-- Set char buffer as 1st argument to fgets()
+   0x0804847a <+35>:	call   0x8048350 <fgets@plt>              <-- Call to fgget(buffer, 0x200, stdin)
+   0x0804847f <+40>:	lea    eax,[ebp-0x208]                    <-- Load char buffer[520]
+   0x08048485 <+46>:	mov    DWORD PTR [esp],eax                <-- Set char buffer as 1st argument to p()
+   0x08048488 <+49>:	call   0x8048444 <p>                      <-- Call to p(buffer)
+   0x0804848d <+54>:	mov    eax,ds:0x8049810                   <-- Load of m
+   0x08048492 <+59>:	cmp    eax,0x1025544                      <-- Compare m and 0x1025544
+   0x08048497 <+64>:	jne    0x80484a5 <n+78>                   <-- Jump to n+78 if m != 0x1025544
+   0x08048499 <+66>:	mov    DWORD PTR [esp],0x8048590          <-- Set "/bin/cat /home/user/level5/.pass" as 1st argument to system()
+   0x080484a0 <+73>:	call   0x8048360 <system@plt>             <-- Call to system("/bin/cat /home/user/level5/.pass")
    0x080484a5 <+78>:	leave
    0x080484a6 <+79>:	ret
 End of assembler dump.
@@ -114,10 +114,10 @@ gdb-peda$ pdisas p
 Dump of assembler code for function p:
    0x08048444 <+0>:	push   ebp
    0x08048445 <+1>:	mov    ebp,esp
-   0x08048447 <+3>:	sub    esp,0x18                             <-- Allocation of a buffer of 24
-=> 0x0804844a <+6>:	mov    eax,DWORD PTR [ebp+0x8]
-   0x0804844d <+9>:	mov    DWORD PTR [esp],eax
-   0x08048450 <+12>:	call   0x8048340 <printf@plt>           <-- Call to printf with esp as conv string
+   0x08048447 <+3>:	sub    esp,0x18                           <-- Space of 24 bytes allocated for the stack
+=> 0x0804844a <+6>:	mov    eax,DWORD PTR [ebp+0x8]            <-- Load of char buffer
+   0x0804844d <+9>:	mov    DWORD PTR [esp],eax                <-- Set char buffer as 1st argument to printf()
+   0x08048450 <+12>:	call   0x8048340 <printf@plt>             <-- Call to printf(buffer)
    0x08048455 <+17>:	leave
    0x08048456 <+18>:	ret
 End of assembler dump.
