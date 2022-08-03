@@ -55,8 +55,8 @@ Non-debugging symbols:
 0x08048430  fopen
 0x08048430  fopen@plt
 [...]
-0x080484f4  m
-0x08048521  main
+0x080484f4  m                                               <-- m
+0x08048521  main                                            <-- main
 [...]
 gdb-peda$ info variables
 All defined variables:
@@ -66,7 +66,7 @@ Non-debugging symbols:
 0x0804993c  __dso_handle
 0x08049940  completed.6159
 0x08049944  dtor_idx.6161
-0x08049960  c
+0x08049960  c                                               <-- c
 ```
 
 We have cut out some noise in the output but we can see the following relevant information:
@@ -96,57 +96,57 @@ Dump of assembler code for function main:
    0x08048521 <+0>:	push   ebp
    0x08048522 <+1>:	mov    ebp,esp
    0x08048524 <+3>:	and    esp,0xfffffff0
-   0x08048527 <+6>:	sub    esp,0x20                  <--- Room allocated on the stack for two pointers
-   0x0804852a <+9>:	mov    DWORD PTR [esp],0x8       <--- put argument to malloc in esp
-   0x08048531 <+16>:	call   0x80483f0 <malloc@plt>    <--- Call to malloc(8)
-   0x08048536 <+21>:	mov    DWORD PTR [esp+0x1c],eax
-   0x0804853a <+25>:	mov    eax,DWORD PTR [esp+0x1c]
-   0x0804853e <+29>:	mov    DWORD PTR [eax],0x1       <--- Put value 1 at address in eax
-   0x08048544 <+35>:	mov    DWORD PTR [esp],0x8       <--- put argument to malloc in esp
-   0x0804854b <+42>:	call   0x80483f0 <malloc@plt>    <--- Call to malloc(8)
-   0x08048550 <+47>:	mov    edx,eax
-   0x08048552 <+49>:	mov    eax,DWORD PTR [esp+0x1c]
-   0x08048556 <+53>:	mov    DWORD PTR [eax+0x4],edx
-   0x08048559 <+56>:	mov    DWORD PTR [esp],0x8       <--- put argument to malloc in esp
-   0x08048560 <+63>:	call   0x80483f0 <malloc@plt>    <--- Call to malloc(8)
-   0x08048565 <+68>:	mov    DWORD PTR [esp+0x18],eax
-   0x08048569 <+72>:	mov    eax,DWORD PTR [esp+0x18]
-   0x0804856d <+76>:	mov    DWORD PTR [eax],0x2       <--- Put value 2 at address in eax
-   0x08048573 <+82>:	mov    DWORD PTR [esp],0x8       <--- put argument to malloc in esp
-   0x0804857a <+89>:	call   0x80483f0 <malloc@plt>    <--- Call to malloc(8)
-   0x0804857f <+94>:	mov    edx,eax
-   0x08048581 <+96>:	mov    eax,DWORD PTR [esp+0x18]
-   0x08048585 <+100>:	mov    DWORD PTR [eax+0x4],edx
-   0x08048588 <+103>:	mov    eax,DWORD PTR [ebp+0xc]
-   0x0804858b <+106>:	add    eax,0x4
-   0x0804858e <+109>:	mov    eax,DWORD PTR [eax]
-   0x08048590 <+111>:	mov    edx,eax
-   0x08048592 <+113>:	mov    eax,DWORD PTR [esp+0x1c]
-   0x08048596 <+117>:	mov    eax,DWORD PTR [eax+0x4]
-   0x08048599 <+120>:	mov    DWORD PTR [esp+0x4],edx
-   0x0804859d <+124>:	mov    DWORD PTR [esp],eax
-   0x080485a0 <+127>:	call   0x80483e0 <strcpy@plt>    <--- Call to strcpy
-   0x080485a5 <+132>:	mov    eax,DWORD PTR [ebp+0xc]
-   0x080485a8 <+135>:	add    eax,0x8
-   0x080485ab <+138>:	mov    eax,DWORD PTR [eax]
-   0x080485ad <+140>:	mov    edx,eax
-   0x080485af <+142>:	mov    eax,DWORD PTR [esp+0x18]
-   0x080485b3 <+146>:	mov    eax,DWORD PTR [eax+0x4]
-   0x080485b6 <+149>:	mov    DWORD PTR [esp+0x4],edx
-   0x080485ba <+153>:	mov    DWORD PTR [esp],eax
-   0x080485bd <+156>:	call   0x80483e0 <strcpy@plt>    <--- Call to strcpy
-   0x080485c2 <+161>:	mov    edx,0x80486e9             <--- "r"
-   0x080485c7 <+166>:	mov    eax,0x80486eb             <--- "/home/user/level8/.pass"
-   0x080485cc <+171>:	mov    DWORD PTR [esp+0x4],edx
-   0x080485d0 <+175>:	mov    DWORD PTR [esp],eax
-   0x080485d3 <+178>:	call   0x8048430 <fopen@plt>
-   0x080485d8 <+183>:	mov    DWORD PTR [esp+0x8],eax   <--- FILE * returned by fopen
-   0x080485dc <+187>:	mov    DWORD PTR [esp+0x4],0x44  <--- 68 bytes
-   0x080485e4 <+195>:	mov    DWORD PTR [esp],0x8049960 <--- Call writing to address of global variable c
-   0x080485eb <+202>:	call   0x80483c0 <fgets@plt>
-   0x080485f0 <+207>:	mov    DWORD PTR [esp],0x8048703   <--- "~~"
-   0x080485f7 <+214>:	call   0x8048400 <puts@plt>
-   0x080485fc <+219>:	mov    eax,0x0
+   0x08048527 <+6>:	sub    esp,0x20                        <-- Space of 32 bytes for the stack frame
+   0x0804852a <+9>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
+   0x08048531 <+16>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
+   0x08048536 <+21>:	mov    DWORD PTR [esp+0x1c],eax        <-- Store the value return of malloc(8) unsigned int **a
+   0x0804853a <+25>:	mov    eax,DWORD PTR [esp+0x1c]        <-- Load unsigned int **a
+   0x0804853e <+29>:	mov    DWORD PTR [eax],0x1             <-- Set the first byte of a[0] to 1
+   0x08048544 <+35>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
+   0x0804854b <+42>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
+   0x08048550 <+47>:	mov    edx,eax                         <-- Store the value return of malloc(8) to edx
+   0x08048552 <+49>:	mov    eax,DWORD PTR [esp+0x1c]        <-- Load unsigned int **a
+   0x08048556 <+53>:	mov    DWORD PTR [eax+0x4],edx         <-- Set the 4th byte of unsigned int **a to edx (a[1] = malloc(8))
+   0x08048559 <+56>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
+   0x08048560 <+63>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
+   0x08048565 <+68>:	mov    DWORD PTR [esp+0x18],eax        <-- Store the value return of malloc(8) to unsigned int **b
+   0x08048569 <+72>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load unsigned int **b
+   0x0804856d <+76>:	mov    DWORD PTR [eax],0x2             <-- Set the first byte of b[0] to 2
+   0x08048573 <+82>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
+   0x0804857a <+89>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
+   0x0804857f <+94>:	mov    edx,eax                         <-- Store the value return of malloc(8) to edx
+   0x08048581 <+96>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load unsigned int **b
+   0x08048585 <+100>:	mov    DWORD PTR [eax+0x4],edx      <-- Set the 4th byte of unsigned int **b to edx (b[1] = malloc(8))
+   0x08048588 <+103>:	mov    eax,DWORD PTR [ebp+0xc]      <-- Load the value of char *argv[]
+   0x0804858b <+106>:	add    eax,0x4                      <-- Add 4 to the address of char *argv[]
+   0x0804858e <+109>:	mov    eax,DWORD PTR [eax]          <-- Load the value of char *argv[1]
+   0x08048590 <+111>:	mov    edx,eax                      <-- Store the value of char *argv[1] to edx
+   0x08048592 <+113>:	mov    eax,DWORD PTR [esp+0x1c]     <-- Load char *a
+   0x08048596 <+117>:	mov    eax,DWORD PTR [eax+0x4]      <-- Load the value of a[1]
+   0x08048599 <+120>:	mov    DWORD PTR [esp+0x4],edx      <-- Set char *argv[1] as the 2nd argument to strcpy()
+   0x0804859d <+124>:	mov    DWORD PTR [esp],eax          <-- Set a[1] the 1st argument to strcpy()
+   0x080485a0 <+127>:	call   0x80483e0 <strcpy@plt>       <-- Call to strcpy(a[1], argv[1])
+   0x080485a5 <+132>:	mov    eax,DWORD PTR [ebp+0xc]      <-- Load the value of char *argv[]
+   0x080485a8 <+135>:	add    eax,0x8                      <-- Add 8 to the address of char *argv[]
+   0x080485ab <+138>:	mov    eax,DWORD PTR [eax]          <-- Load the value of char *argv[2]
+   0x080485ad <+140>:	mov    edx,eax                      <-- Store the value of char *argv[2] to edx
+   0x080485af <+142>:	mov    eax,DWORD PTR [esp+0x18]     <-- Load char *b
+   0x080485b3 <+146>:	mov    eax,DWORD PTR [eax+0x4]      <-- Load the value of b[1]
+   0x080485b6 <+149>:	mov    DWORD PTR [esp+0x4],edx      <-- Set char *argv[2] as the 2nd argument to strcpy()
+   0x080485ba <+153>:	mov    DWORD PTR [esp],eax          <-- Set b[1] the 1st argument to strcpy()
+   0x080485bd <+156>:	call   0x80483e0 <strcpy@plt>       <-- Call to strcpy(b[1], argv[2])
+   0x080485c2 <+161>:	mov    edx,0x80486e9                <-- Load "r"
+   0x080485c7 <+166>:	mov    eax,0x80486eb                <-- Load "/home/user/level8/.pass"
+   0x080485cc <+171>:	mov    DWORD PTR [esp+0x4],edx      <-- Set "r" as the 2nd argument to fgets()
+   0x080485d0 <+175>:	mov    DWORD PTR [esp],eax          <-- Set "/home/user/level8/.pass" as the 1st argument to fgets()
+   0x080485d3 <+178>:	call   0x8048430 <fopen@plt>        <-- Call to fopen("/home/user/level8/.pass", "r")
+   0x080485d8 <+183>:	mov    DWORD PTR [esp+0x8],eax      <-- Set the return value of fopen("/home/user/level8/.pass", "r") as the 3rd argument to fgets()
+   0x080485dc <+187>:	mov    DWORD PTR [esp+0x4],0x44     <-- Set 68 bytes as the 2nd argument to fgets()
+   0x080485e4 <+195>:	mov    DWORD PTR [esp],0x8049960    <-- Set the address of c as the 1st argument to fgets()
+   0x080485eb <+202>:	call   0x80483c0 <fgets@plt>        <-- Call to fgets(c, 68, fopen("/home/user/level8/.pass", "r"))
+   0x080485f0 <+207>:	mov    DWORD PTR [esp],0x8048703    <-- Set "~~" as the 1st argument to puts()
+   0x080485f7 <+214>:	call   0x8048400 <puts@plt>         <-- Call to puts("~~")
+   0x080485fc <+219>:	mov    eax,0x0                      <-- Set eax to 0
    0x08048601 <+224>:	leave
    0x08048602 <+225>:	ret
 End of assembler dump.
@@ -168,14 +168,14 @@ gdb-peda$ disas m
 Dump of assembler code for function m:
    0x080484f4 <+0>:	push   ebp
    0x080484f5 <+1>:	mov    ebp,esp
-   0x080484f7 <+3>:	sub    esp,0x18                         <--- Allocating 24 bits for 1 time_t var + alignment on 16 for call to time
-   0x080484fa <+6>:	mov    DWORD PTR [esp],0x0              <--- feeding value 0 to function time()
-   0x08048501 <+13>:	call   0x80483d0 <time@plt>
-   0x08048506 <+18>:	mov    edx,0x80486e0                    <--- "%s - %d\n" format string
-   0x0804850b <+23>:	mov    DWORD PTR [esp+0x8],eax		<--- Value returned by the call to time()
-   0x0804850f <+27>:	mov    DWORD PTR [esp+0x4],0x8049960    <--- global variable c
-   0x08048517 <+35>:	mov    DWORD PTR [esp],edx              <--- format string
-   0x0804851a <+38>:	call   0x80483b0 <printf@plt>
+   0x080484f7 <+3>:	sub    esp,0x18                        <-- Space of 24 bytes for the stack frame
+   0x080484fa <+6>:	mov    DWORD PTR [esp],0x0             <-- Set 0 as the 1st argument to time();
+   0x08048501 <+13>:	call   0x80483d0 <time@plt>            <-- Call to time(0);
+   0x08048506 <+18>:	mov    edx,0x80486e0                   <-- Load "%s - %d\n"
+   0x0804850b <+23>:	mov    DWORD PTR [esp+0x8],eax         <-- Set value of time(0) as the 3rd argument to printf()
+   0x0804850f <+27>:	mov    DWORD PTR [esp+0x4],0x8049960   <-- Set c as the 2nd argument to printf()
+   0x08048517 <+35>:	mov    DWORD PTR [esp],edx             <-- Set "%s - %d\n" as the 1st argument to printf()
+   0x0804851a <+38>:	call   0x80483b0 <printf@plt>          <-- Call to printf("%s - %d\n", c, time(0))
    0x0804851f <+43>:	leave
    0x08048520 <+44>:	ret
 End of assembler dump.
