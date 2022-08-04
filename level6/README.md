@@ -55,9 +55,9 @@ Non-debugging symbols:
 0x080483a0  _start
 0x080483d0  __do_global_dtors_aux
 0x08048430  frame_dummy
-0x08048454  n                                                   <-- Function `n`
-0x08048468  m                                                   <-- Function `m`
-0x0804847c  main                                                <-- Function `main`
+0x08048454  n                                               <-- Function `n`
+0x08048468  m                                               <-- Function `m`
+0x0804847c  main                                            <-- Function `main`
 0x080484e0  __libc_csu_init
 0x08048550  __libc_csu_fini
 0x08048552  __i686.get_pc_thunk.bx
@@ -73,27 +73,27 @@ Dump of assembler code for function main:
    0x0804847c <+0>:	push   ebp
    0x0804847d <+1>:	mov    ebp,esp
    0x0804847f <+3>:	and    esp,0xfffffff0
-   0x08048482 <+6>:	sub    esp,0x20
-   0x08048485 <+9>:	mov    DWORD PTR [esp],0x40
-   0x0804848c <+16>:	call   0x8048350 <malloc@plt>           <-- Function `malloc(64)`
-   0x08048491 <+21>:	mov    DWORD PTR [esp+0x1c],eax
-   0x08048495 <+25>:	mov    DWORD PTR [esp],0x4
-   0x0804849c <+32>:	call   0x8048350 <malloc@plt>           <-- Function `malloc(4)` called for a second time
-   0x080484a1 <+37>:	mov    DWORD PTR [esp+0x18],eax
-   0x080484a5 <+41>:	mov    edx,0x8048468		        <-- Address of function m(), as seen in previous codeblock
-   0x080484aa <+46>:	mov    eax,DWORD PTR [esp+0x18]
-   0x080484ae <+50>:	mov    DWORD PTR [eax],edx
-   0x080484b0 <+52>:	mov    eax,DWORD PTR [ebp+0xc]
-   0x080484b3 <+55>:	add    eax,0x4
-   0x080484b6 <+58>:	mov    eax,DWORD PTR [eax]
+   0x08048482 <+6>:	sub    esp,0x20                        <-- Space of 32 bytes allocated for the stack frame
+   0x08048485 <+9>:	mov    DWORD PTR [esp],0x40            <-- Set 64 as 1st argument to malloc()
+   0x0804848c <+16>:	call   0x8048350 <malloc@plt>          <-- Call malloc(64)
+   0x08048491 <+21>:	mov    DWORD PTR [esp+0x1c],eax        <-- Store the return value of malloc() to char *a
+   0x08048495 <+25>:	mov    DWORD PTR [esp],0x4             <-- Set 4 as 1st argument to malloc()
+   0x0804849c <+32>:	call   0x8048350 <malloc@plt>          <-- Call malloc(4)
+   0x080484a1 <+37>:	mov    DWORD PTR [esp+0x18],eax        <-- Store the return value of malloc() to f *b
+   0x080484a5 <+41>:	mov    edx,0x8048468		               <-- Address of function m(), as seen in previous codeblock
+   0x080484aa <+46>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load the address of f *b
+   0x080484ae <+50>:	mov    DWORD PTR [eax],edx             <-- Store the address of function m() to f *b
+   0x080484b0 <+52>:	mov    eax,DWORD PTR [ebp+0xc]         <-- Load the address of char *argv[]
+   0x080484b3 <+55>:	add    eax,0x4                         <-- Add 4 to the address of char *argv[]
+   0x080484b6 <+58>:	mov    eax,DWORD PTR [eax]             <-- Load the address of char *argv[1]
    0x080484b8 <+60>:	mov    edx,eax
-   0x080484ba <+62>:	mov    eax,DWORD PTR [esp+0x1c]
-   0x080484be <+66>:	mov    DWORD PTR [esp+0x4],edx          <-- argv[1]
-   0x080484c2 <+70>:	mov    DWORD PTR [esp],eax              <-- buffer argument allocated by malloc(64)  
-   0x080484c5 <+73>:	call   0x8048340 <strcpy@plt>           <-- Function `strcpy`
-   0x080484ca <+78>:	mov    eax,DWORD PTR [esp+0x18]
-   0x080484ce <+82>:	mov    eax,DWORD PTR [eax]
-   0x080484d0 <+84>:	call   eax                              <-- Calling a function contained in eax
+   0x080484ba <+62>:	mov    eax,DWORD PTR [esp+0x1c]        <-- Load the address of char *a
+   0x080484be <+66>:	mov    DWORD PTR [esp+0x4],edx         <-- Set the addres of char *argv[1] to the 2nd argument of strcpy()
+   0x080484c2 <+70>:	mov    DWORD PTR [esp],eax             <-- Set the address of char *a to the 1st argument of strcpy()
+   0x080484c5 <+73>:	call   0x8048340 <strcpy@plt>          <-- Call strcpy(a, argv[1])
+   0x080484ca <+78>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load the address of f *b
+   0x080484ce <+82>:	mov    eax,DWORD PTR [eax]             <-- Load the address of m inside f *b
+   0x080484d0 <+84>:	call   eax                             <-- Call (**b)();
    0x080484d2 <+86>:	leave
    0x080484d3 <+87>:	ret
 End of assembler dump.
@@ -108,9 +108,9 @@ gdb-peda$ disas m
 Dump of assembler code for function m:
    0x08048468 <+0>:	push   ebp
    0x08048469 <+1>:	mov    ebp,esp
-   0x0804846b <+3>:	sub    esp,0x18
-   0x0804846e <+6>:	mov    DWORD PTR [esp],0x80485d1            <-- "Nope"
-   0x08048475 <+13>:	call   0x8048360 <puts@plt>             <-- Function `puts`
+   0x0804846b <+3>:	sub    esp,0x18                        <-- Space of 24 bytes allocated for the stack frame
+   0x0804846e <+6>:	mov    DWORD PTR [esp],0x80485d1       <-- Set "Nope" as 1st argument to puts()
+   0x08048475 <+13>:	call   0x8048360 <puts@plt>            <-- Call puts("Nope")
    0x0804847a <+18>:	leave
    0x0804847b <+19>:	ret
 End of assembler dump.
@@ -123,9 +123,9 @@ gdb-peda$ disas n
 Dump of assembler code for function n:
    0x08048454 <+0>:	push   ebp
    0x08048455 <+1>:	mov    ebp,esp
-   0x08048457 <+3>:	sub    esp,0x18
-   0x0804845a <+6>:	mov    DWORD PTR [esp],0x80485b0
-   0x08048461 <+13>:	call   0x8048370 <system@plt>           <-- Function `system` with argument `/bin/cat /home/user/level7/.pass`
+   0x08048457 <+3>:	sub    esp,0x18                        <-- Space of 24 bytes allocated for the stack frame
+   0x0804845a <+6>:	mov    DWORD PTR [esp],0x80485b0       <-- Set "/bin/cat /home/user/level7/.pass" as 1st argument to system()
+   0x08048461 <+13>:	call   0x8048370 <system@plt>          <-- Call system("/bin/cat /home/user/level7/.pass")
    0x08048466 <+18>:	leave
    0x08048467 <+19>:	ret
 End of assembler dump.
