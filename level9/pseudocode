@@ -1,33 +1,34 @@
 BEGIN CLASS N(int i)
-  char buffer[104];
-  int val;
+    // 108
+    char buffer[];
+    int val;
 
-  N(int val) {
-    this->val = val;
-  }
+    N(int i) {
+        this->val = i;
+    }
 
-  int operator+(N nb){
-    RETURN this->val + nb.val;
-  }
+    int operator+(N nb){
+        RETURN this->val + nb.val;
+    }
 
-  int operator-(N nb){
-    RETURN this->val - nb.val;
-  }
+    int operator-(N nb){
+        RETURN this->val - nb.val;
+    }
 
-  setAnnotation(char *s) {
-    call memcpy(this->buffer, s, strlen(s));
-  }
+    setAnnotation(char *s) {
+        call memcpy(this->buffer, s, strlen(s));
+    }
 END CLASS N
 
 BEGIN main(int argc, char **argv)
-  if (argc < 2){
-    exit 1;
-  }
+    if (argc < 2){
+        exit 1;
+    }
 
-  N *n1 = new N(5)
-  N *n2 = new N(6)
+    N *n1 = new N(5)
+    N *n2 = new N(6)
 
-  n1->setAnnotation(av[1]);
+    n1->setAnnotation(argv[1]);
 
-  return(*n1->operator+(n2->val));
-END main
+    return (*n1->operator+(n2->val));
+END;
