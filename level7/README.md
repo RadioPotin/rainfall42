@@ -99,24 +99,24 @@ Dump of assembler code for function main:
    0x08048527 <+6>:	sub    esp,0x20                        <-- Space of 32 bytes for the stack frame
    0x0804852a <+9>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
    0x08048531 <+16>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
-   0x08048536 <+21>:	mov    DWORD PTR [esp+0x1c],eax        <-- Store the value return of malloc(8) unsigned int **a
-   0x0804853a <+25>:	mov    eax,DWORD PTR [esp+0x1c]        <-- Load unsigned int **a
+   0x08048536 <+21>:	mov    DWORD PTR [esp+0x1c],eax        <-- Store the value return of malloc(8) char **a
+   0x0804853a <+25>:	mov    eax,DWORD PTR [esp+0x1c]        <-- Load char **a
    0x0804853e <+29>:	mov    DWORD PTR [eax],0x1             <-- Set the first byte of a[0] to 1
    0x08048544 <+35>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
    0x0804854b <+42>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
    0x08048550 <+47>:	mov    edx,eax                         <-- Store the value return of malloc(8) to edx
-   0x08048552 <+49>:	mov    eax,DWORD PTR [esp+0x1c]        <-- Load unsigned int **a
-   0x08048556 <+53>:	mov    DWORD PTR [eax+0x4],edx         <-- Set the 4th byte of unsigned int **a to edx (a[1] = malloc(8))
+   0x08048552 <+49>:	mov    eax,DWORD PTR [esp+0x1c]        <-- Load char **a
+   0x08048556 <+53>:	mov    DWORD PTR [eax+0x4],edx         <-- Set the 4th byte of char **a to edx (a[1] = malloc(8))
    0x08048559 <+56>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
    0x08048560 <+63>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
-   0x08048565 <+68>:	mov    DWORD PTR [esp+0x18],eax        <-- Store the value return of malloc(8) to unsigned int **b
-   0x08048569 <+72>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load unsigned int **b
+   0x08048565 <+68>:	mov    DWORD PTR [esp+0x18],eax        <-- Store the value return of malloc(8) to char **b
+   0x08048569 <+72>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load char **b
    0x0804856d <+76>:	mov    DWORD PTR [eax],0x2             <-- Set the first byte of b[0] to 2
    0x08048573 <+82>:	mov    DWORD PTR [esp],0x8             <-- Set 8 as the 1st argument to malloc()
    0x0804857a <+89>:	call   0x80483f0 <malloc@plt>          <-- Call to malloc(8)
    0x0804857f <+94>:	mov    edx,eax                         <-- Store the value return of malloc(8) to edx
-   0x08048581 <+96>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load unsigned int **b
-   0x08048585 <+100>:	mov    DWORD PTR [eax+0x4],edx      <-- Set the 4th byte of unsigned int **b to edx (b[1] = malloc(8))
+   0x08048581 <+96>:	mov    eax,DWORD PTR [esp+0x18]        <-- Load char **b
+   0x08048585 <+100>:	mov    DWORD PTR [eax+0x4],edx      <-- Set the 4th byte of char **b to edx (b[1] = malloc(8))
    0x08048588 <+103>:	mov    eax,DWORD PTR [ebp+0xc]      <-- Load the value of char *argv[]
    0x0804858b <+106>:	add    eax,0x4                      <-- Add 4 to the address of char *argv[]
    0x0804858e <+109>:	mov    eax,DWORD PTR [eax]          <-- Load the value of char *argv[1]
