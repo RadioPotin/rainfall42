@@ -42,48 +42,48 @@ gdb-peda$ pdisas main
 Dump of assembler code for function main:
    0x08048424 <+0>:	push   ebp
    0x08048425 <+1>:	mov    ebp,esp
-   0x08048427 <+3>:	and    esp,0xfffffff0                     <-- allign the stack to 16 bytes boundaries
-   0x0804842a <+6>:	sub    esp,0x40                           <-- 64 Bytes allocated.
-   0x0804842d <+9>:	mov    eax,DWORD PTR [ebp+0xc]            <-- load *argv[]
-   0x08048430 <+12>:	add    eax,0x4                            <-- eax = &argv[1]
-   0x08048433 <+15>:	mov    eax,DWORD PTR [eax]                <-- eax = argv[1]
-   0x08048435 <+17>:	mov    DWORD PTR [esp],eax                <-- prepare argv[1] as argument to atoi()
-   0x08048438 <+20>:	call   0x8048360 <atoi@plt>               <-- call atoi(argv[1])
-   0x0804843d <+25>:	mov    DWORD PTR [esp+0x3c],eax           <-- store return of atoi(argv[1])
-   0x08048441 <+29>:	cmp    DWORD PTR [esp+0x3c],0x9           <-- compare return of atoi(argv[1]) with 9
-   0x08048446 <+34>:	jle    0x804844f <main+43>                <-- if atoi(argv[1]) <= 9, jump to main+43
-   0x08048448 <+36>:	mov    eax,0x1                            <-- set eax to 1
+   0x08048427 <+3>:	and    esp,0xfffffff0                     <-- Allign the stack to 16 bytes boundaries
+   0x0804842a <+6>:	sub    esp,0x40                           <-- Space of 64 bytes for the stack frame
+   0x0804842d <+9>:	mov    eax,DWORD PTR [ebp+0xc]            <-- Load char *argv[]
+   0x08048430 <+12>:	add    eax,0x4                            <-- Add 4 to char *argv[]
+   0x08048433 <+15>:	mov    eax,DWORD PTR [eax]                <-- Load char *argv[1]
+   0x08048435 <+17>:	mov    DWORD PTR [esp],eax                <-- Set char *argv[1] as the 1st argument to atoi()
+   0x08048438 <+20>:	call   0x8048360 <atoi@plt>               <-- Call to atoi(argv[1])
+   0x0804843d <+25>:	mov    DWORD PTR [esp+0x3c],eax           <-- Store the return of atoi(argv[1]) in int i ( i = atoi(argv[1]) )
+   0x08048441 <+29>:	cmp    DWORD PTR [esp+0x3c],0x9           <-- Compare return of atoi(argv[1]) with 9
+   0x08048446 <+34>:	jle    0x804844f <main+43>                <-- If atoi(argv[1]) <= 9, jump to main+43
+   0x08048448 <+36>:	mov    eax,0x1                            <-- Set eax to 1
    0x0804844d <+41>:	jmp    0x80484a3 <main+127>               <-- jump to main+127 (return(1))
-   0x0804844f <+43>:	mov    eax,DWORD PTR [esp+0x3c]           <-- load atoi(argv[1])
-   0x08048453 <+47>:	lea    ecx,[eax*4+0x0]                    <-- set ecx to atoi(argv[1]) * 4
-   0x0804845a <+54>:	mov    eax,DWORD PTR [ebp+0xc]            <-- load char *argv[]
-   0x0804845d <+57>:	add    eax,0x8                            <-- set eax to argv[2]
-   0x08048460 <+60>:	mov    eax,DWORD PTR [eax]                <-- load char *argv[2]
-   0x08048462 <+62>:	mov    edx,eax                            <-- set edx to eax
-   0x08048464 <+64>:	lea    eax,[esp+0x14]                     <-- load char buffer[40];
-   0x08048468 <+68>:	mov    DWORD PTR [esp+0x8],ecx            <-- set 3rd argument to i *= 4
-   0x0804846c <+72>:	mov    DWORD PTR [esp+0x4],edx            <-- set 2nd argument to argv[2]
-   0x08048470 <+76>:	mov    DWORD PTR [esp],eax                <-- set 1st argument to buffer
-   0x08048473 <+79>:	call   0x8048320 <memcpy@plt>             <-- call memcpy(buffer, argv[2], i)
-   0x08048478 <+84>:	cmp    DWORD PTR [esp+0x3c],0x574f4c46    <-- compare i with '1464814662'
-   0x08048480 <+92>:	jne    0x804849e <main+122>               <-- if i != '1464814662', jump to main+122 (return(0))
-   0x08048482 <+94>:	mov    DWORD PTR [esp+0x8],0x0            <-- set 3rd argument to 0
-   0x0804848a <+102>:	mov    DWORD PTR [esp+0x4],0x8048580   <-- set 2nd argument to "sh"
-   0x08048492 <+110>:	mov    DWORD PTR [esp],0x8048583       <-- set 1st argument to "/bin/sh"
-   0x08048499 <+117>:	call   0x8048350 <execl@plt>           <-- call execl("/bin/sh", "sh", 0)
+   0x0804844f <+43>:	mov    eax,DWORD PTR [esp+0x3c]           <-- Load int i
+   0x08048453 <+47>:	lea    ecx,[eax*4+0x0]                    <-- Set ecx to i * 4
+   0x0804845a <+54>:	mov    eax,DWORD PTR [ebp+0xc]            <-- Load char *argv[]
+   0x0804845d <+57>:	add    eax,0x8                            <-- Add 8 to char *argv[]
+   0x08048460 <+60>:	mov    eax,DWORD PTR [eax]                <-- Load char *argv[2]
+   0x08048462 <+62>:	mov    edx,eax
+   0x08048464 <+64>:	lea    eax,[esp+0x14]                     <-- Load char buffer[40];
+   0x08048468 <+68>:	mov    DWORD PTR [esp+0x8],ecx            <-- Set i * 4 as the 3rd argument to memcpy()
+   0x0804846c <+72>:	mov    DWORD PTR [esp+0x4],edx            <-- Set char *argv[2] as the 2nd argument to memcpy()
+   0x08048470 <+76>:	mov    DWORD PTR [esp],eax                <-- Set char buffer[40] as the 1st argument to memcpy()
+   0x08048473 <+79>:	call   0x8048320 <memcpy@plt>             <-- Call to memcpy(buffer, argv[2], i * 4)
+   0x08048478 <+84>:	cmp    DWORD PTR [esp+0x3c],0x574f4c46    <-- Compare int i with '1464814662'
+   0x08048480 <+92>:	jne    0x804849e <main+122>               <-- if i != '1464814662', jump to main+122
+   0x08048482 <+94>:	mov    DWORD PTR [esp+0x8],0x0            <-- Set 0 as the 3rd argument to execl()
+   0x0804848a <+102>:	mov    DWORD PTR [esp+0x4],0x8048580   <-- Set "sh" as the 2nd argument to execl()
+   0x08048492 <+110>:	mov    DWORD PTR [esp],0x8048583       <-- Set "/bin/sh" as the 1st argument to execl()
+   0x08048499 <+117>:	call   0x8048350 <execl@plt>           <-- Call to execl("/bin/sh", "sh", 0)
    0x0804849e <+122>:	mov    eax,0x0                         <-- set eax to 0
    0x080484a3 <+127>:	leave
-   0x080484a4 <+128>:	ret                                    <-- return(0)
+   0x080484a4 <+128>:	ret
 End of assembler dump.
 ```
 
-## Identifying the vulnerability 
+## Identifying the vulnerability
 
 We clearly can see that the `main` function is calling `execl` with the `/bin/sh` and `sh` arguments.
 
 But how can we get there ?
 
-### Underflowing the integer 
+### Underflowing the integer
 
 Our first argument to this binary is passed to `i = atoi(argv[1])`.
 
@@ -93,7 +93,7 @@ We can go further.
 
 Then the value returned by `atoi()` is multiplied by `4`.
 
-So `i` becomes `i * 4`. 
+So `i` becomes `i * 4`.
 
 Then we have `memcpy(buffer, argv[2], i)`.
 
@@ -103,7 +103,7 @@ We pass our second argument to the binary and it is copied byte after byte to th
 
 The `buffer` can hold at most `40` bytes.
 
-We cleary have a buffer overflow potential here. 
+We cleary have a buffer overflow potential here.
 
 But from a simple mathematical standpoint, it is not possible.
 
@@ -117,7 +117,7 @@ We receive a signed integer from the `atoi()` function, but we pass a unsigned i
 
 So we must ensure to have a correct value for the `i` variable as a signed integer and pass the first check and still trigger a buffer overflow.
 
-### Overflowing the buffer 
+### Overflowing the buffer
 
 Since the integer is at the higher memory address than the buffer, we can easily overflow this address and pass the condition `if (i == 1464814662)`.
 
