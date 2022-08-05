@@ -16,19 +16,19 @@ BEGIN CLASS N(int i)
     }
 
     setAnnotation(char *s) {
-        call memcpy(this->buffer, s, strlen(s));
+        memcpy(this->buffer, s, strlen(s));
     }
 END CLASS N
 
 BEGIN main(int argc, char **argv)
-    if (argc < 2){
-        exit 1;
-    }
+
+    if (argc <= 1)
+        _exit(1);
 
     N *n1 = new N(5)
     N *n2 = new N(6)
 
     n1->setAnnotation(argv[1]);
 
-    return (*n1->operator+(n2->val));
+    RETURN (*n1->operator+(n2->val));
 END;
