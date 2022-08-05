@@ -85,12 +85,12 @@ Dump of assembler code for function main:
    0x080485a4 <+0>:	push   ebp
    0x080485a5 <+1>:	mov    ebp,esp
    0x080485a7 <+3>:	and    esp,0xfffffff0
-   0x080485aa <+6>:	sub    esp,0x40                           <-- 64 Bytes allocated: char buffer[54] (54 + 8 Bytes) + 2 Bytes for alignement
-   0x080485ad <+9>:	lea    eax,[esp+0x16]                     <-- Loading char buffer[54]
-   0x080485b1 <+13>:	mov    DWORD PTR [esp],eax
+   0x080485aa <+6>:	sub    esp,0x40                           <-- Space of 64 bytes for the stack frame
+   0x080485ad <+9>:	lea    eax,[esp+0x16]                     <-- Load char buffer[54]
+   0x080485b1 <+13>:	mov    DWORD PTR [esp],eax                <-- Set char buffer[54] as the 1st argument to pp()
    0x080485b4 <+16>:	call   0x804851e <pp>                     <-- Call to pp(buffer)
-   0x080485b9 <+21>:	lea    eax,[esp+0x16]                     <-- Loading char buffer[54]
-   0x080485bd <+25>:	mov    DWORD PTR [esp],eax
+   0x080485b9 <+21>:	lea    eax,[esp+0x16]                     <-- Load char buffer[54]
+   0x080485bd <+25>:	mov    DWORD PTR [esp],eax                <-- Set char buffer[54] as the 1st argument to puts()
    0x080485c0 <+28>:	call   0x80483b0 <puts@plt>               <-- Call to puts(buffer)
    0x080485c5 <+33>:	mov    eax,0x0
    0x080485ca <+38>:	leave
@@ -107,21 +107,21 @@ Dump of assembler code for function pp:
    0x0804851f <+1>:	mov    ebp,esp
    0x08048521 <+3>:	push   edi
    0x08048522 <+4>:	push   ebx
-   0x08048523 <+5>:	sub    esp,0x50                           <-- 80 Bytes allocated: char *dash = " - " (8 + 4 bytes) + char input_1[20] (8 + 20 Bytes) + char input_2[20] (8 + 20 Bytes) + 12 Bytes for alignement
-   0x08048526 <+8>:	mov    DWORD PTR [esp+0x4],0x80486a0      <-- Loading char *dash
+   0x08048523 <+5>:	sub    esp,0x50                           <-- Space of 80 bytes for the stack frame
+   0x08048526 <+8>:	mov    DWORD PTR [esp+0x4],0x80486a0      <-- Set " - " as the 2nd argument to p()
    0x0804852e <+16>:	lea    eax,[ebp-0x30]                     <-- Loading char input_1[20]
-   0x08048531 <+19>:	mov    DWORD PTR [esp],eax
-   0x08048534 <+22>:	call   0x80484b4 <p>                      <-- Call to p(input_1, dash)
-   0x08048539 <+27>:	mov    DWORD PTR [esp+0x4],0x80486a0      <-- Loading char *dash
+   0x08048531 <+19>:	mov    DWORD PTR [esp],eax                <-- Set input_1[20] as the 1st argument to p()
+   0x08048534 <+22>:	call   0x80484b4 <p>                      <-- Call to p(input_1, " - ")
+   0x08048539 <+27>:	mov    DWORD PTR [esp+0x4],0x80486a0      <-- Set " - " as the 2nd argument to p()
    0x08048541 <+35>:	lea    eax,[ebp-0x1c]                     <-- Loading char input_2[20]
-   0x08048544 <+38>:	mov    DWORD PTR [esp],eax
-   0x08048547 <+41>:	call   0x80484b4 <p>                      <-- Call to p(input_2, dash)
+   0x08048544 <+38>:	mov    DWORD PTR [esp],eax                <-- Set input_2[20] as the 1st argument to p()
+   0x08048547 <+41>:	call   0x80484b4 <p>                      <-- Call to p(input_2, " - ")
    0x0804854c <+46>:	lea    eax,[ebp-0x30]                     <-- Loading char input_1[20]
-   0x0804854f <+49>:	mov    DWORD PTR [esp+0x4],eax
+   0x0804854f <+49>:	mov    DWORD PTR [esp+0x4],eax            <-- Set input_1[20] as the 2nd argument to strcpy()
    0x08048553 <+53>:	mov    eax,DWORD PTR [ebp+0x8]            <-- Loading char *buffer
-   0x08048556 <+56>:	mov    DWORD PTR [esp],eax
+   0x08048556 <+56>:	mov    DWORD PTR [esp],eax                <-- Set buffer as the 1st argument to strcpy()
    0x08048559 <+59>:	call   0x80483a0 <strcpy@plt>             <-- Call to strcpy(buffer, input_1)
-   0x0804855e <+64>:	mov    ebx,0x80486a4                      <-- Add " " to ebx
+   0x0804855e <+64>:	mov    ebx,0x80486a4                      <-- Set " " to ebx
    0x08048563 <+69>:	mov    eax,DWORD PTR [ebp+0x8]            <-- Loading char *buffer
    0x08048566 <+72>:	mov    DWORD PTR [ebp-0x3c],0xffffffff
    0x0804856d <+79>:	mov    edx,eax
@@ -136,9 +136,9 @@ Dump of assembler code for function pp:
    0x08048585 <+103>:	movzx  edx,WORD PTR [ebx]
    0x08048588 <+106>:	mov    WORD PTR [eax],dx
    0x0804858b <+109>:	lea    eax,[ebp-0x1c]                  <-- Loading char input_2[20]
-   0x0804858e <+112>:	mov    DWORD PTR [esp+0x4],eax
+   0x0804858e <+112>:	mov    DWORD PTR [esp+0x4],eax         <-- Set input_2[20] as the 2nd argument to strcat()
    0x08048592 <+116>:	mov    eax,DWORD PTR [ebp+0x8]         <-- Loading char *buffer
-   0x08048595 <+119>:	mov    DWORD PTR [esp],eax
+   0x08048595 <+119>:	mov    DWORD PTR [esp],eax             <-- Set buffer as the 1st argument to strcat()
    0x08048598 <+122>:	call   0x8048390 <strcat@plt>          <-- Call to strcat(buffer, input_2)
    0x0804859d <+127>:	add    esp,0x50
    0x080485a0 <+130>:	pop    ebx
@@ -155,26 +155,26 @@ gdb-peda$ disas p
 Dump of assembler code for function p:
    0x080484b4 <+0>:	push   ebp
    0x080484b5 <+1>:	mov    ebp,esp
-   0x080484b7 <+3>:	sub    esp,0x1018                         <-- 4120 Bytes allocated: char *input (8 Bytes) + char *dash (8 Bytes) + char tmp[4096] + char *newline (8 Bytes)
-   0x080484bd <+9>:	mov    eax,DWORD PTR [ebp+0xc]            <-- Loading char *dash
-   0x080484c0 <+12>:	mov    DWORD PTR [esp],eax
+   0x080484b7 <+3>:	sub    esp,0x1018                         <-- Space of 4120 bytes for the stack frame
+   0x080484bd <+9>:	mov    eax,DWORD PTR [ebp+0xc]            <-- Loading const char *dash
+   0x080484c0 <+12>:	mov    DWORD PTR [esp],eax                <-- Set const char *dash as the 1st argument to puts()
    0x080484c3 <+15>:	call   0x80483b0 <puts@plt>               <-- Call to puts(dash)
-   0x080484c8 <+20>:	mov    DWORD PTR [esp+0x8],0x1000         <-- Loading 4096 bytes
-   0x080484d0 <+28>:	lea    eax,[ebp-0x1008]
-   0x080484d6 <+34>:	mov    DWORD PTR [esp+0x4],eax            <-- Loading char tmp[4096]
-   0x080484da <+38>:	mov    DWORD PTR [esp],0x0                <-- Loading stdin
-   0x080484e1 <+45>:	call   0x8048380 <read@plt>               <-- Call to read(stdin, tmp, 4096)
-   0x080484e6 <+50>:	mov    DWORD PTR [esp+0x4],0xa            <-- Loading '\n'
-   0x080484ee <+58>:	lea    eax,[ebp-0x1008]                   <-- Loading char tmp[4096]
-   0x080484f4 <+64>:	mov    DWORD PTR [esp],eax
-   0x080484f7 <+67>:	call   0x80483d0 <strchr@plt>             <-- Call to char *newline = strchr(tmp, '\n')
-   0x080484fc <+72>:	mov    BYTE PTR [eax],0x0                 <-- char *newline to 0
-   0x080484ff <+75>:	lea    eax,[ebp-0x1008]                   <-- Loading char tmp[4096]
-   0x08048505 <+81>:	mov    DWORD PTR [esp+0x8],0x14           <-- Loading 20 bytes
-   0x0804850d <+89>:	mov    DWORD PTR [esp+0x4],eax            <-- Loading char *input
-   0x08048511 <+93>:	mov    eax,DWORD PTR [ebp+0x8]
-   0x08048514 <+96>:	mov    DWORD PTR [esp],eax
-   0x08048517 <+99>:	call   0x80483f0 <strncpy@plt>           <-- Call to strncpy(input, tmp, 20)
+   0x080484c8 <+20>:	mov    DWORD PTR [esp+0x8],0x1000         <-- Set 4096 bytes as the 3rd argument to read()
+   0x080484d0 <+28>:	lea    eax,[ebp-0x1008]                   <-- Loading char tmp[4104]
+   0x080484d6 <+34>:	mov    DWORD PTR [esp+0x4],eax            <-- Set char tmp[4104] as the 2nd argument to read()
+   0x080484da <+38>:	mov    DWORD PTR [esp],0x0                <-- Set 0 as the 1st argument to read()
+   0x080484e1 <+45>:	call   0x8048380 <read@plt>               <-- Call to read(0, tmp, 4096)
+   0x080484e6 <+50>:	mov    DWORD PTR [esp+0x4],0xa            <-- Set '\n' as the 2nd argument to strchr()
+   0x080484ee <+58>:	lea    eax,[ebp-0x1008]                   <-- Loading char tmp[4104]
+   0x080484f4 <+64>:	mov    DWORD PTR [esp],eax                <-- Set tmp[4104] as the 1st argument to strchr()
+   0x080484f7 <+67>:	call   0x80483d0 <strchr@plt>             <-- Call to char strchr(tmp, '\n')
+   0x080484fc <+72>:	mov    BYTE PTR [eax],0x0                 <-- Set '\n' to the first byte of the return value of strchr()
+   0x080484ff <+75>:	lea    eax,[ebp-0x1008]                   <-- Loading char tmp[4104]
+   0x08048505 <+81>:	mov    DWORD PTR [esp+0x8],0x14           <-- Set 20 as the 3rd argument to strncpy()
+   0x0804850d <+89>:	mov    DWORD PTR [esp+0x4],eax            <-- Set char tmp[4104] as the 2nd argument to strncpy()
+   0x08048511 <+93>:	mov    eax,DWORD PTR [ebp+0x8]            <-- Loading char *input
+   0x08048514 <+96>:	mov    DWORD PTR [esp],eax                <-- Set char *input as the 1st argument to strncpy()
+   0x08048517 <+99>:	call   0x80483f0 <strncpy@plt>            <-- Call to strncpy(input, tmp, 20)
    0x0804851c <+104>:	leave
    0x0804851d <+105>:	ret
 End of assembler dump.
