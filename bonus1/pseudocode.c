@@ -1,21 +1,22 @@
-int main(int ac, char *argv[])
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[])
 {
     char            buffer[40];
-    int    i;
+    int             i;
 
     i = atoi(argv[1]);
 
     if (i <= 9)
     {
-        i *= 4;
-
-        memcpy(buffer, argv[2], (size_t)i);
+        memcpy(buffer, argv[2], i * 4);
 
         if (i == 1464814662)
-        {
             execl("/bin/sh", "sh", 0);
-            return (0);
-        }
+
+        return (0);
 
     }
 
