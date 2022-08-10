@@ -37,70 +37,70 @@ Dump of assembler code for function main:
    0x080484f7 <+3>:	push   edi
    0x080484f8 <+4>:	push   ebx
    0x080484f9 <+5>:	and    esp,0xfffffff0
-   0x080484fc <+8>:	sub    esp,0xa0                      <-- allocate 160 bytes
-   0x08048502 <+14>:	mov    edx,0x80486f0                 <-- "r"
-   0x08048507 <+19>:	mov    eax,0x80486f2                 <-- "/home/user/end/.pass"
-   0x0804850c <+24>:	mov    DWORD PTR [esp+0x4],edx
-   0x08048510 <+28>:	mov    DWORD PTR [esp],eax
-   0x08048513 <+31>:	call   0x8048410 <fopen@plt>         <-- fopen("/home/user/end/.pass", "r")
-   0x08048518 <+36>:	mov    DWORD PTR [esp+0x9c],eax      <-- store returned value in local var
-   0x0804851f <+43>:	lea    ebx,[esp+0x18]                <-- load local buffer address
-   0x08048523 <+47>:	mov    eax,0x0                       <-- feed 0 to bzero
-   0x08048528 <+52>:	mov    edx,0x21                      <-- store 33
-   0x0804852d <+57>:	mov    edi,ebx                       <-- feed 33 to bzero 
-   0x0804852f <+59>:	mov    ecx,edx                       <-- feed local var buffer to bzero
-   0x08048531 <+61>:	rep stos DWORD PTR es:[edi],eax      <-- bzero(buffer, 33)
-   0x08048533 <+63>:	cmp    DWORD PTR [esp+0x9c],0x0      <-- compare local var with 0 (stream)
-   0x0804853b <+71>:	je     0x8048543 <main+79>           <-- TRUE, go to +79
-   0x0804853d <+73>:	cmp    DWORD PTR [ebp+0x8],0x2       <-- compare argc with 2
-   0x08048541 <+77>:	je     0x804854d <main+89>           <-- TRUE, go to 79
-   0x08048543 <+79>:	mov    eax,0xffffffff                <-- FALSE, put -1 in eax
-   0x08048548 <+84>:	jmp    0x8048615 <main+289>          <-- go to +289 (return(-1))
-   0x0804854d <+89>:	lea    eax,[esp+0x18]                <-- load local buffer address
-   0x08048551 <+93>:	mov    edx,DWORD PTR [esp+0x9c]      <-- get address of local var 
-   0x08048558 <+100>:	mov    DWORD PTR [esp+0xc],edx       <-- feed address to fread
-   0x0804855c <+104>:	mov    DWORD PTR [esp+0x8],0x42      <-- feed 66 to fread
-   0x08048564 <+112>:	mov    DWORD PTR [esp+0x4],0x1       <-- feed 1 to fread
-   0x0804856c <+120>:	mov    DWORD PTR [esp],eax           <-- feed local buffer
-   0x0804856f <+123>:	call   0x80483d0 <fread@plt>         <-- fread(buffer, 1, 66, stream)
-   0x08048574 <+128>:	mov    BYTE PTR [esp+0x59],0x0
-   0x08048579 <+133>:	mov    eax,DWORD PTR [ebp+0xc]       <-- get address of **argv
-   0x0804857c <+136>:	add    eax,0x4                       <-- go to address pointing to *argv + 1
-   0x0804857f <+139>:	mov    eax,DWORD PTR [eax]           <-- get address of argv[1]
-   0x08048581 <+141>:	mov    DWORD PTR [esp],eax           <-- feed to atoi
-   0x08048584 <+144>:	call   0x8048430 <atoi@plt>          <-- atoi(argv[1])
-   0x08048589 <+149>:	mov    BYTE PTR [esp+eax*1+0x18],0x0 <-- put 0 at buffer[atoi(argv[1])]
-   0x0804858e <+154>:	lea    eax,[esp+0x18]                <-- load address of buffer
-   0x08048592 <+158>:	lea    edx,[eax+0x42]                <-- load address of another variable offset from buffer address (buff) 
-   0x08048595 <+161>:	mov    eax,DWORD PTR [esp+0x9c]      <-- get stream var
-   0x0804859c <+168>:	mov    DWORD PTR [esp+0xc],eax       <-- feed stream to fread
-   0x080485a0 <+172>:	mov    DWORD PTR [esp+0x8],0x41      <-- feed 65 to fread
-   0x080485a8 <+180>:	mov    DWORD PTR [esp+0x4],0x1       <-- feed 1 to fread
-   0x080485b0 <+188>:	mov    DWORD PTR [esp],edx           <-- feed new buffer to fread
-   0x080485b3 <+191>:	call   0x80483d0 <fread@plt>         <-- fread(buff, 1, 65, stream);
-   0x080485b8 <+196>:	mov    eax,DWORD PTR [esp+0x9c]      <-- get stream address
-   0x080485bf <+203>:	mov    DWORD PTR [esp],eax           <-- feed stream to fclose
-   0x080485c2 <+206>:	call   0x80483c0 <fclose@plt>        <-- fclose(stream)
-   0x080485c7 <+211>:	mov    eax,DWORD PTR [ebp+0xc]       <-- get address of **argv
-   0x080485ca <+214>:	add    eax,0x4                       <-- go to address pointing to *argv + 1
-   0x080485cd <+217>:	mov    eax,DWORD PTR [eax]           <-- get address of argv[1]
-   0x080485cf <+219>:	mov    DWORD PTR [esp+0x4],eax       <-- feed argv[1] to strcmp
-   0x080485d3 <+223>:	lea    eax,[esp+0x18]                <-- load address of local buffer
-   0x080485d7 <+227>:	mov    DWORD PTR [esp],eax           <-- feed buffer to strcmp
-   0x080485da <+230>:	call   0x80483b0 <strcmp@plt>          <-- strcmp(buffer, argv[1])
-   0x080485df <+235>:	test   eax,eax                         <-- if strcmp == 0
-   0x080485e1 <+237>:	jne    0x8048601 <main+269>            <-- TRUE, return 0
-   0x080485e3 <+239>:	mov    DWORD PTR [esp+0x8],0x0         <-- feed 0 to execl
-   0x080485eb <+247>:	mov    DWORD PTR [esp+0x4],0x8048707   <-- feed "sh" to execl
-   0x080485f3 <+255>:	mov    DWORD PTR [esp],0x804870a       <-- feed "/bin/sh" to execl
-   0x080485fa <+262>:	call   0x8048420 <execl@plt>           <-- execl("/bin/sh", "sh", 0)
+   0x080484fc <+8>:	sub    esp,0xa0                           <-- Space of 160 bytes for the stack frame
+   0x08048502 <+14>:	mov    edx,0x80486f0                      <-- Load "r"
+   0x08048507 <+19>:	mov    eax,0x80486f2                      <-- Load "/home/user/end/.pass"
+   0x0804850c <+24>:	mov    DWORD PTR [esp+0x4],edx            <-- Set "r" as 2nd argument to fopen()
+   0x08048510 <+28>:	mov    DWORD PTR [esp],eax                <-- Set "/home/user/end/.pass" as 1st argument to fopen()
+   0x08048513 <+31>:	call   0x8048410 <fopen@plt>              <-- Call to fopen("/home/user/end/.pass", "r")
+   0x08048518 <+36>:	mov    DWORD PTR [esp+0x9c],eax           <-- Store return value of fopen() to FILE *stream
+   0x0804851f <+43>:	lea    ebx,[esp+0x18]                     <-- Load char buffer[132]
+   0x08048523 <+47>:	mov    eax,0x0                            <-- Set '\0' as the overwrite byte and 2nd argument to memset()
+   0x08048528 <+52>:	mov    edx,0x21                           <-- Set 33 * 4 = 132 the counter
+   0x0804852d <+57>:	mov    edi,ebx                            <-- Set char *buffer as 1st argument to memset()
+   0x0804852f <+59>:	mov    ecx,edx                            <-- Set 132 as the 3rd argument to memset()
+   0x08048531 <+61>:	rep stos DWORD PTR es:[edi],eax           <-- Call to memset(buffer, '\0', 132)
+   0x08048533 <+63>:	cmp    DWORD PTR [esp+0x9c],0x0           <-- Compare if FILE *stream is NULL
+   0x0804853b <+71>:	je     0x8048543 <main+79>                <-- If it is, jump to main+79
+   0x0804853d <+73>:	cmp    DWORD PTR [ebp+0x8],0x2            <-- Compare int argc and 2
+   0x08048541 <+77>:	je     0x804854d <main+89>                <-- If it is, jump to main+89
+   0x08048543 <+79>:	mov    eax,0xffffffff                     <-- Else, put -1 in eax
+   0x08048548 <+84>:	jmp    0x8048615 <main+289>               <-- Go to +289 (return(-1))
+   0x0804854d <+89>:	lea    eax,[esp+0x18]                     <-- Load char buffer[132]
+   0x08048551 <+93>:	mov    edx,DWORD PTR [esp+0x9c]           <-- Load FILE *stream
+   0x08048558 <+100>:	mov    DWORD PTR [esp+0xc],edx         <-- Set FILE *stream as 4th argument to fread()
+   0x0804855c <+104>:	mov    DWORD PTR [esp+0x8],0x42        <-- Set 66 as the 3rd argument to fread()
+   0x08048564 <+112>:	mov    DWORD PTR [esp+0x4],0x1         <-- Set 1 as the 2nd argument to fread()
+   0x0804856c <+120>:	mov    DWORD PTR [esp],eax             <-- Set char buffer[132] as 1st argument to fread()
+   0x0804856f <+123>:	call   0x80483d0 <fread@plt>           <-- Call to fread(buffer, 1, 66, stream)
+   0x08048574 <+128>:	mov    BYTE PTR [esp+0x59],0x0         <-- Set 0 int index
+   0x08048579 <+133>:	mov    eax,DWORD PTR [ebp+0xc]         <-- Load char *argv[]
+   0x0804857c <+136>:	add    eax,0x4                         <-- Add 4 to char *argv[]
+   0x0804857f <+139>:	mov    eax,DWORD PTR [eax]             <-- Load char *argv[1]
+   0x08048581 <+141>:	mov    DWORD PTR [esp],eax             <-- Set char *argv[1] as 1st argument to atoi()
+   0x08048584 <+144>:	call   0x8048430 <atoi@plt>            <-- Call to atoi(argv[1])
+   0x08048589 <+149>:	mov    BYTE PTR [esp+eax*1+0x18],0x0   <-- Set buffer[index] to '\0'
+   0x0804858e <+154>:	lea    eax,[esp+0x18]                  <-- Load char buffer[132]
+   0x08048592 <+158>:	lea    edx,[eax+0x42]                  <-- Load address &buffer[66]
+   0x08048595 <+161>:	mov    eax,DWORD PTR [esp+0x9c]        <-- Load FILE *stream
+   0x0804859c <+168>:	mov    DWORD PTR [esp+0xc],eax         <-- Set FILE *stream as 4th argument to fread()
+   0x080485a0 <+172>:	mov    DWORD PTR [esp+0x8],0x41        <-- Set 65 as the 3rd argument to fread()
+   0x080485a8 <+180>:	mov    DWORD PTR [esp+0x4],0x1         <-- Set 1 as the 2nd argument to fread()
+   0x080485b0 <+188>:	mov    DWORD PTR [esp],edx             <-- Set &buffer[66] as 1st argument to fread()
+   0x080485b3 <+191>:	call   0x80483d0 <fread@plt>           <-- Call to fread(&buffer[66], 1, 65, stream)
+   0x080485b8 <+196>:	mov    eax,DWORD PTR [esp+0x9c]        <-- Load FILE *stream
+   0x080485bf <+203>:	mov    DWORD PTR [esp],eax             <-- Set FILE *stream as 1st argument to fclose()
+   0x080485c2 <+206>:	call   0x80483c0 <fclose@plt>          <-- Call to fclose(stream)
+   0x080485c7 <+211>:	mov    eax,DWORD PTR [ebp+0xc]         <-- Load char *argv[]
+   0x080485ca <+214>:	add    eax,0x4                         <-- Add 4 to char *argv[]
+   0x080485cd <+217>:	mov    eax,DWORD PTR [eax]             <-- Load char *argv[1]
+   0x080485cf <+219>:	mov    DWORD PTR [esp+0x4],eax         <-- Set char *argv[1] as 2nd argument to strcmp()
+   0x080485d3 <+223>:	lea    eax,[esp+0x18]                  <-- Load char buffer[132]
+   0x080485d7 <+227>:	mov    DWORD PTR [esp],eax             <-- Set char buffer[132] as 1st argument to strcmp()
+   0x080485da <+230>:	call   0x80483b0 <strcmp@plt>          <-- Call to strcmp(buffer, argv[1])
+   0x080485df <+235>:	test   eax,eax                         <-- Test if strcmp() returned 0
+   0x080485e1 <+237>:	jne    0x8048601 <main+269>            <-- If it is not, jump to main+269
+   0x080485e3 <+239>:	mov    DWORD PTR [esp+0x8],0x0         <-- Set 0 as the 3rd argument to execl()
+   0x080485eb <+247>:	mov    DWORD PTR [esp+0x4],0x8048707   <-- Set "sh" as the 2nd argument to execl()
+   0x080485f3 <+255>:	mov    DWORD PTR [esp],0x804870a       <-- Set "/bin/sh" as the 1st argument to execl()
+   0x080485fa <+262>:	call   0x8048420 <execl@plt>           <-- Call to execl("/bin/sh", "sh", 0)
    0x080485ff <+267>:	jmp    0x8048610 <main+284>            <-- go to +284 (return(0))
-   0x08048601 <+269>:	lea    eax,[esp+0x18]
-   0x08048605 <+273>:	add    eax,0x42
-   0x08048608 <+276>:	mov    DWORD PTR [esp],eax
-   0x0804860b <+279>:	call   0x80483e0 <puts@plt>
-   0x08048610 <+284>:	mov    eax,0x0
-   0x08048615 <+289>:	lea    esp,[ebp-0x8]
+   0x08048601 <+269>:	lea    eax,[esp+0x18]                  <-- Load char buffer[132]
+   0x08048605 <+273>:	add    eax,0x42                        <-- Add 66 to char buffer[132]
+   0x08048608 <+276>:	mov    DWORD PTR [esp],eax             <-- Set &buffer[66] as 1st argument to puts()
+   0x0804860b <+279>:	call   0x80483e0 <puts@plt>            <-- Call to puts(&buffer[66])
+   0x08048610 <+284>:	mov    eax,0x0                         <-- Set 0 as the return value
+   0x08048615 <+289>:	lea    esp,[ebp-0x8]                   <-- Restore esp to original value
    0x08048618 <+292>:	pop    ebx
    0x08048619 <+293>:	pop    edi
    0x0804861a <+294>:	pop    ebp
